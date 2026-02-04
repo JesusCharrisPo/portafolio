@@ -133,7 +133,7 @@ export function GalleryDesarrolloWeb() {
           <Button asChild size="lg" className="text-base px-8">
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-5 w-5" />
-              💬 Solicitar Propuesta de Web
+              Solicitar Propuesta de Web
             </a>
           </Button>
         </div>

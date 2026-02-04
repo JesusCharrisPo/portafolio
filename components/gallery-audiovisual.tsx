@@ -209,7 +209,7 @@ export function GalleryAudiovisual() {
           <Button asChild size="lg" className="text-base px-8">
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-5 w-5" />
-              🎬 Ver Reel de Proyectos
+              Ver Reel de Proyectos
             </a>
           </Button>
         </div>

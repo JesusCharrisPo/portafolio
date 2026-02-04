@@ -36,7 +36,7 @@ export function Hero() {
             <Button size="lg" asChild className="text-base px-8">
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 h-5 w-5" />
-                💬 Solicitar Consulta
+                Solicitar Consulta
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild className="text-base px-8 bg-transparent">

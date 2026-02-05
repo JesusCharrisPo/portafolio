@@ -34,7 +34,7 @@ export function GalleryAudiovisual() {
             </h2>
           </div>
           <p className="text-muted-foreground max-w-md text-balance md:text-right">
-            Fusionamos la técnica cinematográfica tradicional con algoritmos de IA generativa para resultados de alto impacto.
+            Fusionamos la técnica cinematográfica tradicional con algoritmos de IA generativa para resultados de alto impacto..
           </p>
         </div>
 

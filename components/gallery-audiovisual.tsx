@@ -5,9 +5,101 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ExternalLink, Play, ImageIcon, Video, Sparkles, MessageCircle, Zap, Cpu, Camera, ArrowRight } from "lucide-react"
+import { ExternalLink, Play, ImageIcon, Video, Sparkles, MessageCircle, Zap, Camera, ArrowRight } from "lucide-react"
 
-// ... (Tipos y categorías se mantienen igual para no romper tu lógica de datos)
+type MediaItem = {
+  id: number
+  title: string
+  description: string
+  type: "image" | "video"
+  url: string
+  thumbnail: string
+}
+
+type SubCategory = {
+  id: string
+  name: string
+  icon: typeof Video | typeof ImageIcon
+  items: MediaItem[]
+}
+
+type MainCategory = {
+  id: string
+  name: string
+  icon: typeof Sparkles
+  description: string
+  subcategories: SubCategory[]
+}
+
+const categories: MainCategory[] = [
+  {
+    id: "sin-ia",
+    name: "Producción Sin IA",
+    icon: Camera,
+    description: "Producción audiovisual tradicional con equipo profesional de última generación",
+    subcategories: [
+      {
+        id: "videos-sin-ia",
+        name: "Videos",
+        icon: Video,
+        items: [
+          { id: 1, title: "Video Corporativo 1", description: "Producción profesional", type: "video", url: "", thumbnail: "" },
+          { id: 2, title: "Spot Publicitario", description: "Campaña de marca", type: "video", url: "", thumbnail: "" },
+          { id: 3, title: "Video Testimonial", description: "Cliente satisfecho", type: "video", url: "", thumbnail: "" },
+          { id: 4, title: "Reel Institucional", description: "Presentación empresa", type: "video", url: "", thumbnail: "" },
+          { id: 5, title: "Behind the Scenes", description: "Detrás de cámaras", type: "video", url: "", thumbnail: "" },
+        ]
+      },
+      {
+        id: "imagenes-sin-ia",
+        name: "Imágenes",
+        icon: ImageIcon,
+        items: [
+          { id: 1, title: "Fotografía Producto 1", description: "Sesión profesional", type: "image", url: "", thumbnail: "" },
+          { id: 2, title: "Fotografía Corporativa", description: "Equipo de trabajo", type: "image", url: "", thumbnail: "" },
+          { id: 3, title: "Fotografía Evento", description: "Cobertura completa", type: "image", url: "", thumbnail: "" },
+          { id: 4, title: "Fotografía Lifestyle", description: "Estilo de vida", type: "image", url: "", thumbnail: "" },
+          { id: 5, title: "Fotografía Editorial", description: "Para revista", type: "image", url: "", thumbnail: "" },
+        ]
+      }
+    ]
+  },
+  {
+    id: "con-ia",
+    name: "Producción Con IA",
+    icon: Sparkles,
+    description: "Contenido de próxima generación potenciado con inteligencia artificial avanzada",
+    subcategories: [
+      {
+        id: "videos-con-ia",
+        name: "Videos IA",
+        icon: Video,
+        items: [
+          { id: 1, title: "Video Generado IA 1", description: "Creado con IA generativa", type: "video", url: "", thumbnail: "" },
+          { id: 2, title: "Animación IA", description: "Motion graphics con IA", type: "video", url: "", thumbnail: "" },
+          { id: 3, title: "Avatar Digital", description: "Presentador virtual", type: "video", url: "", thumbnail: "" },
+          { id: 4, title: "Video Editado IA", description: "Post-producción IA", type: "video", url: "", thumbnail: "" },
+          { id: 5, title: "Contenido Social IA", description: "Para redes sociales", type: "video", url: "", thumbnail: "" },
+        ]
+      },
+      {
+        id: "imagenes-con-ia",
+        name: "Imágenes IA",
+        icon: ImageIcon,
+        items: [
+          { id: 1, title: "Imagen Generada IA 1", description: "Arte digital con IA", type: "image", url: "", thumbnail: "" },
+          { id: 2, title: "Producto IA", description: "Mockup generado", type: "image", url: "", thumbnail: "" },
+          { id: 3, title: "Banner IA", description: "Publicidad digital", type: "image", url: "", thumbnail: "" },
+          { id: 4, title: "Ilustración IA", description: "Arte conceptual", type: "image", url: "", thumbnail: "" },
+          { id: 5, title: "Retoque IA", description: "Edición avanzada", type: "image", url: "", thumbnail: "" },
+        ]
+      }
+    ]
+  }
+]
+
+const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_MESSAGE = "🎬 ¡Hola Jesus! 👋 Me interesa tu servicio de *Producción Audiovisual* 🎥✨ Quiero crear contenido profesional para mi marca. ¿Podemos hablar sobre mi proyecto? 🚀📞"
 
 export function GalleryAudiovisual() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
@@ -18,7 +110,7 @@ export function GalleryAudiovisual() {
 
   return (
     <section id="galeria-audiovisual" className="py-24 bg-background relative overflow-hidden">
-      {/* Sutiles acentos de luz para dar profundidad sin ensuciar otras secciones */}
+      {/* Línea superior sutil para separación visual */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,7 +145,7 @@ export function GalleryAudiovisual() {
                   value={cat.id}
                   className="rounded-full px-8 py-2.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm flex items-center gap-2"
                 >
-                  {cat.id === "con-ia" ? <Sparkles className="h-4 w-4" /> : <Camera className="h-4 w-4" />}
+                  <cat.icon className="h-4 w-4" />
                   {cat.name}
                 </TabsTrigger>
               ))}
@@ -113,7 +205,7 @@ export function GalleryAudiovisual() {
                               </div>
                             )}
                             
-                            {item.type === "video" && (
+                            {item.type === "video" && (item.thumbnail || item.url) && (
                               <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md p-2 rounded-full border border-white/10">
                                 <Play className="h-3 w-3 text-white fill-current" />
                               </div>
@@ -143,11 +235,49 @@ export function GalleryAudiovisual() {
           >
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3">
               <MessageCircle className="h-5 w-5 text-primary" />
-              <span>SOLICITAR CONSULTORÍA VISUAL</span>
+              <span>Ver Reel de Proyectos</span>
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </a>
           </Button>
         </div>
+
+        {/* Preview Dialog */}
+        <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
+          <DialogContent className="bg-card/95 backdrop-blur-xl border-primary/20 max-w-4xl shadow-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-foreground text-2xl font-bold flex items-center gap-2">
+                {selectedItem?.type === "video" ? <Video className="h-6 w-6 text-primary" /> : <ImageIcon className="h-6 w-6 text-primary" />}
+                {selectedItem?.title}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedItem && (
+              <div className="space-y-6">
+                <div className="relative rounded-xl overflow-hidden border border-border/50 shadow-xl">
+                  {selectedItem.type === "video" ? (
+                    <video 
+                      src={selectedItem.url} 
+                      controls 
+                      className="w-full"
+                    />
+                  ) : (
+                    <img 
+                      src={selectedItem.url || "/placeholder.svg"} 
+                      alt={selectedItem.title}
+                      className="w-full"
+                    />
+                  )}
+                </div>
+                <p className="text-muted-foreground text-center">{selectedItem.description}</p>
+                <Button asChild className="w-full rounded-full group">
+                  <a href={selectedItem.url} target="_blank" rel="noopener noreferrer">
+                    Ver en pantalla completa
+                    <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </a>
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   )

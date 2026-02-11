@@ -28,7 +28,7 @@ export function About() {
     <section id="sobre-mi" className="py-20 bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Image */}
+          {/* download (4).png*/}
           <div className="relative">
             <div className="aspect-square max-w-md mx-auto lg:mx-0 rounded-2xl bg-muted overflow-hidden border border-border">
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-muted">

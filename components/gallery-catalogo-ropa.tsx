@@ -140,7 +140,7 @@ export function GalleryCatalogoRopa() {
           <Button asChild size="lg" className="text-base px-8">
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-5 w-5" />
-              Solicitar Catalogo de Ropa
+              👗 Solicitar Catalogo de Ropa
             </a>
           </Button>
         </div>

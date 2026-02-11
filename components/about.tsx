@@ -189,27 +189,25 @@ export function About() {
               <div className="absolute -inset-4 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 rounded-2xl blur-2xl" />
 
               {/* Image container */}
-              <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.02] backdrop-blur-sm">
-                <Image
-                  src="/Perfil.jpg"
-                  alt="Jesus Charris"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+<div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.02] backdrop-blur-sm aspect-square">
+  <img
+    src="/Perfil.jpg"
+    alt="Jesus Charris"
+    className="w-full h-full object-cover"
+  />
 
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#07080d]/60 via-transparent to-transparent" />
+  {/* Overlay gradient */}
+  <div className="absolute inset-0 bg-gradient-to-t from-[#07080d]/60 via-transparent to-transparent" />
 
-                {/* Scanline on image */}
-                <div
-                  className="absolute inset-0 opacity-[0.04] pointer-events-none"
-                  style={{
-                    backgroundImage:
-                      "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px)",
-                  }}
-                />
-              </div>
+  {/* Scanline on image */}
+  <div
+    className="absolute inset-0 opacity-[0.04] pointer-events-none"
+    style={{
+      backgroundImage:
+        "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px)",
+    }}
+  />
+</div>
 
               {/* Corner decorations */}
               <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-cyan-500/40 rounded-tl-lg" />

@@ -348,7 +348,7 @@ export function Contact() {
               </SpotlightCard>
             </motion.div>
 
-            {/* Social links /}
+            {/* Social links */}
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}

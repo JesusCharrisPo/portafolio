@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { 
   BarChart3, 
@@ -28,12 +29,16 @@ export function About() {
     <section id="sobre-mi" className="py-20 bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Image */}
+          {/* Image Section - AQUI ESTA EL CAMBIO */}
           <div className="relative">
-            <div className="aspect-square max-w-md mx-auto lg:mx-0 rounded-2xl bg-muted overflow-hidden border border-border">
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-muted">
-                <span className="text-6xl font-bold text-primary/30">JC</span>
-              </div>
+            <div className="aspect-square max-w-md mx-auto lg:mx-0 rounded-2xl bg-muted overflow-hidden border border-border relative">
+              <Image 
+                src="/perfil.jpg" 
+                alt="Jesus Charris" 
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
             {/* Decorative element */}
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-primary/10 rounded-2xl -z-10" />

@@ -33,7 +33,7 @@ export function About() {
           <div className="relative">
             <div className="aspect-square max-w-md mx-auto lg:mx-0 rounded-2xl bg-muted overflow-hidden border border-border relative">
               <Image 
-                src="/perfil.png" 
+                src="/perfil.jpg" 
                 alt="Jesus Charris" 
                 fill
                 className="object-cover"

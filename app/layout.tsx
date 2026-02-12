@@ -1,6 +1,7 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { CustomCursor } from "@/components/custom-cursor"
 
 import './globals.css'
 
@@ -21,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>{children}</body>
+      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
+        <CustomCursor />
+        {children}
+      </body>
     </html>
   )
 }

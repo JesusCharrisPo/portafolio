@@ -46,7 +46,7 @@ const categories: Category[] = [
         description: "E-commerce completo con Shopify",
         type: "image",
         thumbnail: "",
-        images: [],
+        images: ["/mac1.jpg","/mac2.jpg","/mac3.jpg",],
       },
       {
         id: 2,

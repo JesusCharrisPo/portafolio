@@ -42,8 +42,8 @@ const categories: Category[] = [
     items: [
       {
         id: 1,
-        title: "Tienda de Moda",
-        description: "E-commerce completo con Shopify",
+        title: "Mac One | E-commerce Streetwear",
+        description: "Tienda Shopify de alta conversión con integración de pagos contra entrega (COD), recuperación de carritos y diseño responsive adaptado a la estética de la marca.",
         type: "image",
         thumbnail: "/mac1.jpg",
         images: ["/mac1.jpg","/mac2.jpg","/mac3.jpg",],

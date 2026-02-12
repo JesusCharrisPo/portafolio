@@ -501,7 +501,7 @@ export function GalleryDesarrolloWeb() {
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/[0.05] mb-4 sm:mb-6">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
             <span className="text-[10px] sm:text-xs font-mono text-cyan-400 tracking-widest uppercase">
-              Portfolio
+              PORTAFOLIO - MIS TRABAJOS REALIZADOS
             </span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-bold text-white mb-3 sm:mb-4 font-mono tracking-tight">

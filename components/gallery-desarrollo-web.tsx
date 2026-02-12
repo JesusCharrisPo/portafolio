@@ -511,7 +511,10 @@ export function GalleryDesarrolloWeb() {
             </span>
           </h2>
           <p className="text-white/40 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
-            Portafolio de sitios web en Shopify, WordPress y soluciones de Dropshipping
+            Tu visión es única, tu web también debería serlo.
+Transformo ideas abstractas en Negocios Digitales Rentables mediante Embudos de Venta estratégicos que fusionan estética y facturación.
+Especialista en ecosistemas Shopify, WordPress y Dropshipping con un estándar de calidad superior.
+Deja de soñarlo, vamos a programarlo.
           </p>
         </motion.div>
 

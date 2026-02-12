@@ -512,8 +512,9 @@ export function GalleryDesarrolloWeb() {
           </h2>
           <p className="text-white/40 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
             Tu visión es única, tu web también debería serlo.
-Transformo ideas abstractas en Negocios Digitales Rentables mediante Embudos de Venta estratégicos que fusionan estética y facturación.
-Especialista en ecosistemas Shopify, WordPress y Dropshipping con un estándar de calidad superior.
+
+Transformo ideas abstractas en Negocios Digitales Rentables mediante Embudos de Venta estratégicos. A continuación, explora mi colección de proyectos realizados en Shopify, WordPress y Dropshipping con un estándar de calidad superior.
+
 Deja de soñarlo, vamos a programarlo.
           </p>
         </motion.div>

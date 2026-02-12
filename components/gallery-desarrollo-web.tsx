@@ -73,19 +73,19 @@ const categories: Category[] = [
     items: [
       {
         id: 1,
-        title: "Portafolio Creativo",
-        description: "Sitio web profesional",
+        title: "García & Asociados | Firma Legal Corporativa",
+        description: "Sitio WordPress corporativo diseñado para transmitir autoridad y generar leads (clientes potenciales). Estructura optimizada para SEO local, con formularios de contacto de alta conversión e integración de agendamiento de citas.",
         type: "image",
-        thumbnail: "",
-        images: [],
+        thumbnail: "/abo1.jpg",
+        images: ["/abo1.jpg","/abo2.jpg",],
       },
       {
         id: 2,
-        title: "Blog Corporativo",
-        description: "WordPress optimizado SEO",
+        title: "Agencia de Seguros Blog de Noticias | Estrategia SEO| ",
+        description: "Sitio web corporativo de alto rendimiento para agencia de seguros. Diseñado para generar confianza inmediata y captar leads cualificados mediante formularios de cotización especializados por nicho (ej. transporte/DOT) y llamadas a la acción claras.Implementación de blog corporativo para marketing de contenidos.Estructura optimizada para motores de búsqueda (SEO) que posiciona a la agencia como líder de opinión y atrae tráfico orgánico cualificado.",
         type: "image",
-        thumbnail: "",
-        images: [],
+        thumbnail: "/tru1.jpg",
+        images: ["/tru1.jpg","/tru2.jpg",],
       },
       {
         id: 3,

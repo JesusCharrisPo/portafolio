@@ -50,8 +50,8 @@ const categories: Category[] = [
       },
       {
         id: 2,
-        title: "Tienda de Accesorios",
-        description: "Shopify con integraciones",
+        title: "Tienda Maringlow | Beauty & Skincare",
+        description: "E-commerce de nicho belleza enfocado en la confianza del consumidor. Integra sistema de reseñas verificadas (prueba social) y pasarelas de pago locales para un checkout sin fricción.",
         type: "image",
         thumbnail: "/mar1.jpg",
         images: ["/mar1.jpg","/mar2.jpg","/mar3.jpg",],

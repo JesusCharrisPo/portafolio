@@ -45,7 +45,7 @@ const categories: Category[] = [
         title: "Tienda de Moda",
         description: "E-commerce completo con Shopify",
         type: "image",
-        thumbnail: "",
+        thumbnail: "/mac1.jpg",
         images: ["/mac1.jpg","/mac2.jpg","/mac3.jpg",],
       },
       {

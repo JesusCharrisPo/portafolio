@@ -53,8 +53,8 @@ const categories: Category[] = [
         title: "Tienda de Accesorios",
         description: "Shopify con integraciones",
         type: "image",
-        thumbnail: "",
-        images: [],
+        thumbnail: "/mar1.jpg",
+        images: ["/mar1.jpg","/mar2.jpg","/mar3.jpg",],
       },
       {
         id: 3,

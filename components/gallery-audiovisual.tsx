@@ -56,8 +56,9 @@ const categories: MainCategory[] = [
         items: [
           { id: 1, title: "Reel 1", description: "Producción profesional", type: "video", url: "", thumbnail: "", duration: "" },
           { id: 2, title: "Mac One | Discolandia Fashion Film", description: "Dirección y producción audiovisual en locación histórica (tienda de vinilos LP). Storytelling visual diseñado para conectar la herencia cultural con la identidad de la marca.", type: "video", url: "/DISCOLANDIA.mp4", thumbnail: "DISCOLANDIA.mp4", duration: "0:41" },
-          { id: 3, title: "Reel 3", description: "Campaña publicitaria", type: "video", url: "", thumbnail: "", duration: "" },
-        ],
+          { id: 3, title: "Oxxo | Urban Styling Concept", description: "Dirección creativa de video de styling. Uso de locaciones cotidianas para crear una estética urbana cruda y conectar la moda con el estilo de vida de la calle.", type: "video", url: "/OXXO.mp4", thumbnail: "/OXXO.mp4", duration: "0:37" },
+          { id: 4, title: "Mac One | Street Medallo Editorial", description: "Fashion film producido en las calles de Medellín. Cinematografía dinámica enfocada en el modelaje urbano para exhibir el fit y fluidez de las prendas en su entorno natural.", type: "video", url: "/STREETMEDALLO.mp4", thumbnail: "/STREETMEDALLO.mp4", duration: "0:16" },
+		],
       },
       {
         id: "horizontal-sin-ia",

@@ -55,7 +55,7 @@ const categories: MainCategory[] = [
         aspect: "vertical",
         items: [
           { id: 1, title: "Reel 1", description: "Producción profesional", type: "video", url: "", thumbnail: "", duration: "" },
-          { id: 2, title: "Reel 2", description: "Contenido de marca", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 2, title: "Mac One | Discolandia Fashion Film", description: "Dirección y producción audiovisual en locación histórica (tienda de vinilos LP). Storytelling visual diseñado para conectar la herencia cultural con la identidad de la marca.", type: "video", url: "/DISCOLANDIA.mp4", thumbnail: "DISCOLANDIA.mp4", duration: "0:41" },
           { id: 3, title: "Reel 3", description: "Campaña publicitaria", type: "video", url: "", thumbnail: "", duration: "" },
         ],
       },

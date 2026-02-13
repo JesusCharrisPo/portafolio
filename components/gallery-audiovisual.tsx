@@ -2,15 +2,16 @@
 
 import { useState, useRef, MouseEvent } from "react"
 import {
-  ExternalLink,
   Play,
   ImageIcon,
   Video,
   Sparkles,
   MessageCircle,
   X,
-  Zap,
   Film,
+  Smartphone,
+  Monitor,
+  Info,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -21,19 +22,21 @@ type MediaItem = {
   type: "image" | "video"
   url: string
   thumbnail: string
+  duration?: string
 }
 
 type SubCategory = {
   id: string
   name: string
-  icon: typeof Video | typeof ImageIcon
+  icon: any
+  aspect: "vertical" | "horizontal"
   items: MediaItem[]
 }
 
 type MainCategory = {
   id: string
   name: string
-  icon: typeof Video | typeof Sparkles
+  icon: any
   description: string
   subcategories: SubCategory[]
 }
@@ -46,27 +49,24 @@ const categories: MainCategory[] = [
     description: "Producción audiovisual tradicional con equipo profesional",
     subcategories: [
       {
-        id: "videos-sin-ia",
-        name: "Videos",
-        icon: Video,
+        id: "vertical-sin-ia",
+        name: "Formato Vertical",
+        icon: Smartphone,
+        aspect: "vertical",
         items: [
-          { id: 1, title: "Video Corporativo", description: "Producción profesional", type: "video", url: "", thumbnail: "" },
-          { id: 2, title: "Spot Publicitario", description: "Campaña de marca", type: "video", url: "", thumbnail: "" },
-          { id: 3, title: "Video Testimonial", description: "Cliente satisfecho", type: "video", url: "", thumbnail: "" },
-          { id: 4, title: "Reel Institucional", description: "Presentación empresa", type: "video", url: "", thumbnail: "" },
-          { id: 5, title: "Behind the Scenes", description: "Detrás de cámaras", type: "video", url: "", thumbnail: "" },
+          { id: 1, title: "Reel 1", description: "Producción profesional", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 2, title: "Reel 2", description: "Contenido de marca", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 3, title: "Reel 3", description: "Campaña publicitaria", type: "video", url: "", thumbnail: "", duration: "" },
         ],
       },
       {
-        id: "imagenes-sin-ia",
-        name: "Imágenes",
-        icon: ImageIcon,
+        id: "horizontal-sin-ia",
+        name: "Formato Horizontal",
+        icon: Monitor,
+        aspect: "horizontal",
         items: [
-          { id: 1, title: "Fotografía Producto", description: "Sesión profesional", type: "image", url: "", thumbnail: "" },
-          { id: 2, title: "Fotografía Corporativa", description: "Equipo de trabajo", type: "image", url: "", thumbnail: "" },
-          { id: 3, title: "Fotografía Evento", description: "Cobertura completa", type: "image", url: "", thumbnail: "" },
-          { id: 4, title: "Fotografía Lifestyle", description: "Estilo de vida", type: "image", url: "", thumbnail: "" },
-          { id: 5, title: "Fotografía Editorial", description: "Para revista", type: "image", url: "", thumbnail: "" },
+          { id: 1, title: "Video Corporativo", description: "Producción profesional", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 2, title: "Spot Publicitario", description: "Campaña de marca", type: "video", url: "", thumbnail: "", duration: "" },
         ],
       },
     ],
@@ -78,27 +78,23 @@ const categories: MainCategory[] = [
     description: "Contenido potenciado con inteligencia artificial",
     subcategories: [
       {
-        id: "videos-con-ia",
-        name: "Videos IA",
-        icon: Video,
+        id: "vertical-con-ia",
+        name: "Formato Vertical",
+        icon: Smartphone,
+        aspect: "vertical",
         items: [
-          { id: 1, title: "Video Generado IA", description: "Creado con IA generativa", type: "video", url: "", thumbnail: "" },
-          { id: 2, title: "Animación IA", description: "Motion graphics con IA", type: "video", url: "", thumbnail: "" },
-          { id: 3, title: "Avatar Digital", description: "Presentador virtual", type: "video", url: "", thumbnail: "" },
-          { id: 4, title: "Video Editado IA", description: "Post-producción IA", type: "video", url: "", thumbnail: "" },
-          { id: 5, title: "Contenido Social IA", description: "Para redes sociales", type: "video", url: "", thumbnail: "" },
+          { id: 1, title: "Reel IA 1", description: "Generado con IA", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 2, title: "Reel IA 2", description: "Animación IA", type: "video", url: "", thumbnail: "", duration: "" },
         ],
       },
       {
-        id: "imagenes-con-ia",
-        name: "Imágenes IA",
-        icon: ImageIcon,
+        id: "horizontal-con-ia",
+        name: "Formato Horizontal",
+        icon: Monitor,
+        aspect: "horizontal",
         items: [
-          { id: 1, title: "Imagen Generada IA", description: "Arte digital con IA", type: "image", url: "", thumbnail: "" },
-          { id: 2, title: "Producto IA", description: "Mockup generado", type: "image", url: "", thumbnail: "" },
-          { id: 3, title: "Banner IA", description: "Publicidad digital", type: "image", url: "", thumbnail: "" },
-          { id: 4, title: "Ilustración IA", description: "Arte conceptual", type: "image", url: "", thumbnail: "" },
-          { id: 5, title: "Retoque IA", description: "Edición avanzada", type: "image", url: "", thumbnail: "" },
+          { id: 1, title: "Video IA", description: "Producción con IA", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 2, title: "Animación IA", description: "Motion graphics IA", type: "video", url: "", thumbnail: "", duration: "" },
         ],
       },
     ],
@@ -114,10 +110,12 @@ const WHATSAPP_MESSAGE =
 function MediaCard({
   item,
   index,
+  aspect,
   onClick,
 }: {
   item: MediaItem
   index: number
+  aspect: "vertical" | "horizontal"
   onClick: () => void
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
@@ -131,6 +129,7 @@ function MediaCard({
   }
 
   const hasContent = item.thumbnail || item.url
+  const aspectClass = aspect === "vertical" ? "aspect-[9/16]" : "aspect-video"
 
   return (
     <motion.div
@@ -150,24 +149,24 @@ function MediaCard({
         className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
           background: isHovered
-            ? `radial-gradient(150px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(0,255,200,0.15), transparent 60%)`
+            ? `radial-gradient(200px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.2), transparent 60%)`
             : "none",
         }}
       />
 
-      <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-500 group-hover:border-cyan-500/20">
+      <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-500 group-hover:border-purple-500/20">
         {/* Inner spotlight */}
         {isHovered && (
           <div
             className="absolute inset-0 pointer-events-none z-10"
             style={{
-              background: `radial-gradient(120px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(0,255,200,0.04), transparent 60%)`,
+              background: `radial-gradient(150px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.05), transparent 60%)`,
             }}
           />
         )}
 
         {/* Thumbnail area */}
-        <div className="aspect-square relative bg-[#0a0b10] flex items-center justify-center overflow-hidden">
+        <div className={`${aspectClass} relative bg-[#0a0b10] flex items-center justify-center overflow-hidden`}>
           {hasContent ? (
             <>
               <img
@@ -178,10 +177,11 @@ function MediaCard({
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#07080d] via-transparent to-transparent opacity-60" />
 
+              {/* Play button */}
               {item.type === "video" && (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-cyan-500/30 bg-cyan-500/[0.1] backdrop-blur-sm flex items-center justify-center group-hover:border-cyan-400/50 group-hover:bg-cyan-500/[0.15] transition-all duration-300">
-                    <Play className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-400 ml-0.5 drop-shadow-[0_0_8px_rgba(0,255,200,0.4)]" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-purple-500/30 bg-purple-500/[0.1] backdrop-blur-sm flex items-center justify-center group-hover:border-purple-400/50 group-hover:bg-purple-500/[0.2] group-hover:scale-110 transition-all duration-300">
+                    <Play className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400 ml-0.5 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
                   </div>
                 </div>
               )}
@@ -189,16 +189,11 @@ function MediaCard({
           ) : (
             <div className="flex flex-col items-center gap-2.5">
               <div className="w-10 h-10 rounded-lg border border-white/[0.06] bg-white/[0.02] flex items-center justify-center">
-                {item.type === "video" ? (
-                  <Video className="h-5 w-5 text-white/20" />
-                ) : (
-                  <ImageIcon className="h-5 w-5 text-white/20" />
-                )}
+                <Video className="h-5 w-5 text-white/20" />
               </div>
               <span className="text-[10px] font-mono text-white/20 tracking-widest uppercase">
                 Próximamente
               </span>
-              {/* Scanlines for empty state */}
               <div
                 className="absolute inset-0 pointer-events-none opacity-[0.03]"
                 style={{
@@ -209,10 +204,19 @@ function MediaCard({
             </div>
           )}
 
-          {/* Type badge */}
-          <div className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-md border border-white/[0.08] bg-black/40 backdrop-blur-sm">
-            <span className="text-[9px] font-mono text-white/40 tracking-wider uppercase">
-              {item.type === "video" ? "VID" : "IMG"}
+          {/* Duration badge */}
+          {item.duration && (
+            <div className="absolute bottom-2 right-2 z-10 px-2 py-0.5 rounded-md border border-white/[0.1] bg-black/60 backdrop-blur-sm">
+              <span className="text-[10px] font-mono text-white/60 tracking-wider">
+                {item.duration}
+              </span>
+            </div>
+          )}
+
+          {/* Format badge */}
+          <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-md border border-purple-500/20 bg-black/40 backdrop-blur-sm">
+            <span className="text-[9px] font-mono text-purple-400/70 tracking-wider uppercase">
+              {aspect === "vertical" ? "9:16" : "16:9"}
             </span>
           </div>
         </div>
@@ -226,8 +230,8 @@ function MediaCard({
         </div>
 
         {/* Corner accents */}
-        <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l border-cyan-500/0 group-hover:border-cyan-500/20 transition-colors duration-500" />
-        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r border-cyan-500/0 group-hover:border-cyan-500/20 transition-colors duration-500" />
+        <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l border-purple-500/0 group-hover:border-purple-500/20 transition-colors duration-500" />
+        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r border-purple-500/0 group-hover:border-purple-500/20 transition-colors duration-500" />
       </div>
     </motion.div>
   )
@@ -240,31 +244,41 @@ function TabButton({
   onClick,
   icon: Icon,
   label,
+  tooltip,
 }: {
   active: boolean
   onClick: () => void
-  icon: typeof Video
+  icon: any
   label: string
+  tooltip?: string
 }) {
   return (
-    <button
-      onClick={onClick}
-      className={`relative flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-[11px] sm:text-xs tracking-wider uppercase transition-all duration-300 ${
-        active
-          ? "text-cyan-400 border border-cyan-500/30 bg-cyan-500/[0.08]"
-          : "text-white/30 border border-white/[0.06] bg-white/[0.02] hover:text-white/50 hover:border-white/[0.1]"
-      }`}
-    >
-      <Icon className={`h-3.5 w-3.5 ${active ? "drop-shadow-[0_0_6px_rgba(0,255,200,0.3)]" : ""}`} />
-      {label}
-      {active && (
-        <motion.div
-          layoutId="activeTabGlow"
-          className="absolute inset-0 rounded-lg border border-cyan-500/10"
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-        />
+    <div className="relative group/tab">
+      <button
+        onClick={onClick}
+        className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 ${
+          active
+            ? "text-purple-400 border border-purple-500/30 bg-purple-500/[0.08]"
+            : "text-white/30 border border-white/[0.06] bg-white/[0.02] hover:text-white/50 hover:border-white/[0.1]"
+        }`}
+      >
+        <Icon className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${active ? "drop-shadow-[0_0_6px_rgba(168,85,247,0.3)]" : ""}`} />
+        {label}
+        {active && (
+          <motion.div
+            layoutId="activeTabGlow"
+            className="absolute inset-0 rounded-lg border border-purple-500/10"
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          />
+        )}
+      </button>
+      {/* Tooltip */}
+      {tooltip && (
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono text-white/50 whitespace-nowrap opacity-0 group-hover/tab:opacity-100 transition-opacity duration-300 pointer-events-none hidden sm:block">
+          {tooltip}
+        </div>
       )}
-    </button>
+    </div>
   )
 }
 
@@ -273,7 +287,7 @@ function TabButton({
 export function GalleryAudiovisual() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeMainTab, setActiveMainTab] = useState("sin-ia")
-  const [activeSubTab, setActiveSubTab] = useState("videos-sin-ia")
+  const [activeSubTab, setActiveSubTab] = useState("vertical-sin-ia")
 
   const currentCategory = categories.find((c) => c.id === activeMainTab)
   const currentSubcategory = currentCategory?.subcategories.find((s) => s.id === activeSubTab)
@@ -284,6 +298,13 @@ export function GalleryAudiovisual() {
     setActiveMainTab(id)
     const cat = categories.find((c) => c.id === id)
     if (cat) setActiveSubTab(cat.subcategories[0].id)
+  }
+
+  const getGridClass = () => {
+    if (currentSubcategory?.aspect === "vertical") {
+      return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
+    }
+    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
   }
 
   return (
@@ -326,11 +347,11 @@ export function GalleryAudiovisual() {
           </h2>
 
           <p className="text-white/35 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
-            Galería de videos e imágenes con producción tradicional y potenciada con IA
+            Galería de videos con producción tradicional y potenciada con IA
           </p>
         </motion.div>
 
-        {/* ── Main Tabs ── */}
+        {/* ── Main Tabs (Sin IA / Con IA) ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -345,6 +366,7 @@ export function GalleryAudiovisual() {
               onClick={() => handleMainTabChange(cat.id)}
               icon={cat.icon}
               label={cat.name}
+              tooltip={cat.id === "sin-ia" ? "Videos grabados con equipo profesional" : "Videos creados con inteligencia artificial"}
             />
           ))}
         </motion.div>
@@ -357,19 +379,19 @@ export function GalleryAudiovisual() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-6 sm:mb-8"
+              className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-5 sm:mb-6"
             >
               {currentCategory.description}
             </motion.p>
           )}
         </AnimatePresence>
 
-        {/* ── Sub Tabs ── */}
+        {/* ── Sub Tabs (Vertical / Horizontal) ── */}
         {currentCategory && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex justify-center gap-2 mb-8 sm:mb-10"
+            className="flex justify-center gap-2 mb-4 sm:mb-5"
           >
             {currentCategory.subcategories.map((sub) => (
               <TabButton
@@ -378,10 +400,23 @@ export function GalleryAudiovisual() {
                 onClick={() => setActiveSubTab(sub.id)}
                 icon={sub.icon}
                 label={sub.name}
+                tooltip={sub.aspect === "vertical" ? "Reels en formato 9:16" : "Videos en formato 16:9"}
               />
             ))}
           </motion.div>
         )}
+
+        {/* ── Guide text ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex items-center justify-center gap-1.5 mb-6 sm:mb-8"
+        >
+          <Info className="h-3 w-3 text-white/20" />
+          <p className="text-[10px] sm:text-xs font-mono text-white/20 text-center">
+            Selecciona una categoría y haz click en cualquier video para reproducirlo
+          </p>
+        </motion.div>
 
         {/* ── Grid ── */}
         <AnimatePresence mode="wait">
@@ -392,14 +427,15 @@ export function GalleryAudiovisual() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
+              className={getGridClass()}
             >
               {currentSubcategory.items.map((item, index) => (
                 <MediaCard
                   key={item.id}
                   item={item}
                   index={index}
-                  onClick={() => item.url && setSelectedItem(item)}
+                  aspect={currentSubcategory.aspect}
+                  onClick={() => (item.url || item.thumbnail) && setSelectedItem(item)}
                 />
               ))}
             </motion.div>
@@ -426,19 +462,19 @@ export function GalleryAudiovisual() {
 
             <MessageCircle className="relative z-10 h-4 w-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
             <span className="relative z-10 text-white/70 group-hover:text-white/90 transition-colors">
-              Ver Reel de Proyectos
+              Solicitar Producción
             </span>
           </a>
         </motion.div>
 
-        {/* ── Preview Modal ── */}
+        {/* ── Video Modal ── */}
         <AnimatePresence>
           {selectedItem && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm"
+              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm"
               onClick={() => setSelectedItem(null)}
             >
               <motion.div
@@ -456,11 +492,7 @@ export function GalleryAudiovisual() {
                 <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg border border-purple-500/20 bg-purple-500/[0.08] flex items-center justify-center">
-                      {selectedItem.type === "video" ? (
-                        <Video className="h-4 w-4 text-purple-400" />
-                      ) : (
-                        <ImageIcon className="h-4 w-4 text-purple-400" />
-                      )}
+                      <Video className="h-4 w-4 text-purple-400" />
                     </div>
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-white font-mono">
@@ -471,48 +503,20 @@ export function GalleryAudiovisual() {
                   </div>
                   <button
                     onClick={() => setSelectedItem(null)}
-                    className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/20 transition-all font-mono text-[10px]"
+                    className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/20 transition-all"
                   >
-                    ESC
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
 
-                {/* Content */}
+                {/* Video */}
                 <div className="p-4 sm:p-5">
-                  {selectedItem.type === "video" ? (
-                    <video
-                      src={selectedItem.url}
-                      controls
-                      className="w-full rounded-lg border border-white/[0.06]"
-                    />
-                  ) : (
-                    <img
-                      src={selectedItem.url || "/placeholder.svg"}
-                      alt={selectedItem.title}
-                      className="w-full rounded-lg border border-white/[0.06]"
-                    />
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-3 p-4 sm:p-5 border-t border-white/[0.06]">
-                  {selectedItem.url && (
-                    <a
-                      href={selectedItem.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-cyan-500/20 bg-cyan-500/[0.06] text-cyan-400 text-xs font-mono tracking-wider hover:bg-cyan-500/[0.12] transition-all"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      Pantalla completa
-                    </a>
-                  )}
-                  <button
-                    onClick={() => setSelectedItem(null)}
-                    className="px-4 py-2 rounded-lg border border-white/[0.08] bg-white/[0.02] text-white/40 text-xs font-mono tracking-wider hover:text-white/60 transition-all"
-                  >
-                    Cerrar
-                  </button>
+                  <video
+                    src={selectedItem.url}
+                    controls
+                    autoPlay
+                    className="w-full rounded-lg border border-white/[0.06]"
+                  />
                 </div>
 
                 {/* Corner decorations */}

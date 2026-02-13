@@ -12,6 +12,8 @@ import {
   Smartphone,
   Monitor,
   Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -41,6 +43,8 @@ type MainCategory = {
   subcategories: SubCategory[]
 }
 
+const VISIBLE_COUNT = 6
+
 const categories: MainCategory[] = [
   {
     id: "sin-ia",
@@ -58,7 +62,7 @@ const categories: MainCategory[] = [
           { id: 2, title: "Mac One | Discolandia Fashion Film", description: "Dirección y producción audiovisual en locación histórica (tienda de vinilos LP). Storytelling visual diseñado para conectar la herencia cultural con la identidad de la marca.", type: "video", url: "/DISCOLANDIA.mp4", thumbnail: "DISCOLANDIA.mp4", duration: "0:41" },
           { id: 3, title: "Oxxo | Urban Styling Concept", description: "Dirección creativa de video de styling. Uso de locaciones cotidianas para crear una estética urbana cruda y conectar la moda con el estilo de vida de la calle.", type: "video", url: "/OXXO.mp4", thumbnail: "/OXXO.mp4", duration: "0:37" },
           { id: 4, title: "Mac One | Street Medallo Editorial", description: "Fashion film producido en las calles de Medellín. Cinematografía dinámica enfocada en el modelaje urbano para exhibir el fit y fluidez de las prendas en su entorno natural.", type: "video", url: "/STREETMEDALLO.mp4", thumbnail: "/STREETMEDALLO.mp4", duration: "0:16" },
-		],
+        ],
       },
       {
         id: "horizontal-sin-ia",
@@ -289,16 +293,27 @@ export function GalleryAudiovisual() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeMainTab, setActiveMainTab] = useState("sin-ia")
   const [activeSubTab, setActiveSubTab] = useState("vertical-sin-ia")
+  const [showAll, setShowAll] = useState(false)
 
   const currentCategory = categories.find((c) => c.id === activeMainTab)
   const currentSubcategory = currentCategory?.subcategories.find((s) => s.id === activeSubTab)
+
+  const allItems = currentSubcategory?.items || []
+  const visibleItems = showAll ? allItems : allItems.slice(0, VISIBLE_COUNT)
+  const hasMore = allItems.length > VISIBLE_COUNT
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
   const handleMainTabChange = (id: string) => {
     setActiveMainTab(id)
+    setShowAll(false)
     const cat = categories.find((c) => c.id === id)
     if (cat) setActiveSubTab(cat.subcategories[0].id)
+  }
+
+  const handleSubTabChange = (id: string) => {
+    setActiveSubTab(id)
+    setShowAll(false)
   }
 
   const getGridClass = () => {
@@ -398,7 +413,7 @@ export function GalleryAudiovisual() {
               <TabButton
                 key={sub.id}
                 active={activeSubTab === sub.id}
-                onClick={() => setActiveSubTab(sub.id)}
+                onClick={() => handleSubTabChange(sub.id)}
                 icon={sub.icon}
                 label={sub.name}
                 tooltip={sub.aspect === "vertical" ? "Reels en formato 9:16" : "Videos en formato 16:9"}
@@ -423,14 +438,14 @@ export function GalleryAudiovisual() {
         <AnimatePresence mode="wait">
           {currentSubcategory && (
             <motion.div
-              key={currentSubcategory.id}
+              key={activeSubTab}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
               className={getGridClass()}
             >
-              {currentSubcategory.items.map((item, index) => (
+              {visibleItems.map((item, index) => (
                 <MediaCard
                   key={item.id}
                   item={item}
@@ -442,6 +457,32 @@ export function GalleryAudiovisual() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── Ver más / Ver menos ── */}
+        {hasMore && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-6 sm:mt-8 text-center"
+          >
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="group relative inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 border border-white/[0.08] bg-white/[0.02] text-white/40 hover:text-white/70 hover:border-purple-500/30 hover:bg-purple-500/[0.05]"
+            >
+              {showAll ? (
+                <>
+                  <ChevronUp className="h-3.5 w-3.5 group-hover:text-purple-400 transition-colors" />
+                  <span>Ver menos</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-3.5 w-3.5 group-hover:text-purple-400 transition-colors" />
+                  <span>Ver más ({allItems.length - VISIBLE_COUNT} videos)</span>
+                </>
+              )}
+            </button>
+          </motion.div>
+        )}
 
         {/* ── CTA ── */}
         <motion.div

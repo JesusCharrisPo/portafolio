@@ -1,7 +1,6 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { ScrollProgress } from "@/components/scroll-progress"
 
 import './globals.css'
 
@@ -23,7 +22,6 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
-        <ScrollProgress />
         {children}
       </body>
     </html>

@@ -96,9 +96,10 @@ const categories: MainCategory[] = [
         icon: Smartphone,
         aspect: "vertical",
         items: [
-          { id: 1, title: "Reel IA 1", description: "Generado con IA", type: "video", url: "", thumbnail: "", duration: "" },
-          { id: 2, title: "Reel IA 2", description: "Animación IA", type: "video", url: "", thumbnail: "", duration: "" },
-        ],
+          { id: 1, title: "Cepillo Dispensador para Mascotas | CGI y Simulación de Fluidos(IA)", description: "Visualización comercial generada con Inteligencia Artificial para un innovador cepillo de baño con dispensador de jabón para perros. Integración de simulaciones hiperrealistas de agua y dinámicas de fluidos para destacar la funcionalidad del producto, logrando un acabado de nivel televisivo sin necesidad de rodaje físico.", type: "video", url: "/cepillo .mp4", thumbnail: "/cepillo .mp4", duration: "0:15" },
+          { id: 2, title: "Avatares Hiperrealistas y Efectos Visuales con (IA)", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "/1002.mp4", thumbnail: "/1002.mp4", duration: "0:08" },
+        
+		],
       },
       {
         id: "horizontal-con-ia",
@@ -106,9 +107,10 @@ const categories: MainCategory[] = [
         icon: Monitor,
         aspect: "horizontal",
         items: [
-          { id: 1, title: "Video IA", description: "Producción con IA", type: "video", url: "", thumbnail: "", duration: "" },
-          { id: 2, title: "Animación IA", description: "Motion graphics IA", type: "video", url: "", thumbnail: "", duration: "" },
-        ],
+          { id: 1, title: "Visualizer Musical | Animación Generativa (IA)", description: "Dirección de arte y animación mediante Inteligencia Artificial para la industria musical (formato Visualizer / Spotify Canvas). Transformación de un concepto estático en una escena de suspenso inmersiva con estética 'retro-slasher' e iluminación cinematográfica, ideal para elevar el lanzamiento de sencillos y retener la atención en plataformas de streaming.", type: "video", url: "/0930.mp4", thumbnail: "/0930.mp4", duration: "0:15" },
+          { id: 2, title: "Videoclip Musical Urbano | Cinematografía Generativa (IA)", description: "Dirección y desarrollo de un videoclip oficial completo para el género Rap/Hip-Hop, renderizado 100% mediante Inteligencia Artificial. Creación de una atmósfera hiperrealista y cruda con iluminación nocturna, efectos atmosféricos (humo, luces de ciudad) y una narrativa visual coherente (storytelling). Esta pieza demuestra la capacidad de sustituir rodajes de alto presupuesto, entregando un producto cinematográfico que conecta perfectamente con la estética de la calle.", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 3, title: "Animación IA", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "", thumbnail: "", duration: "" },
+		],
       },
     ],
   },

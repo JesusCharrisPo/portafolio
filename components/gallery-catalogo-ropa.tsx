@@ -351,8 +351,8 @@ function ImageSliderModal({
 
 // ─── Main Component (Ligero) ──────────────────────────────────────────
 
-// OJO AQUÍ: Usamos export default para que sea fácil de importar en page.tsx
-export default function GalleryCatalogoRopa() {
+// 🔥 AQUÍ ESTÁ EL CAMBIO: Ya no usamos 'default', coincidirá con tu page.tsx
+export function GalleryCatalogoRopa() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeTab, setActiveTab] = useState("catalogo-producto")
 

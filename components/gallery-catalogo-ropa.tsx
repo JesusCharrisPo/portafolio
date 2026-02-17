@@ -381,7 +381,7 @@ function ImageSliderModal({
 
 // ─── Main Component ───────────────────────────────────────────────────
 
-export function GalleryIAGenerativa() {
+export function GalleryCatalogoRopa() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeTab, setActiveTab] = useState("catalogo-producto")
 

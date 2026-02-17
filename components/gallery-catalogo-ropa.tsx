@@ -1,73 +1,121 @@
 "use client"
 
 import { useState, useRef, MouseEvent } from "react"
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion"
 import {
-  ExternalLink,
   Play,
   ImageIcon,
+  MessageCircle,
   Sparkles,
   Camera,
-  MessageCircle,
+  Layers,
+  ChevronLeft,
+  ChevronRight,
   X,
-  Shirt,
+  Maximize2
 } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+
+// ─── Data ─────────────────────────────────────────────────────────────
 
 type MediaItem = {
-  id: number
+  id: number | string
   title: string
   description: string
   type: "image" | "video"
-  url: string
+  images: string[]
   thumbnail: string
 }
 
 type Category = {
   id: string
   name: string
-  icon: typeof Sparkles | typeof Camera
+  icon: React.ReactNode
   description: string
   items: MediaItem[]
 }
 
 const categories: Category[] = [
   {
-    id: "sin-ia",
-    name: "Sin IA",
-    icon: Camera,
-    description: "Fotografía tradicional de moda y productos",
+    id: "catalogo-producto",
+    name: "Catálogo Producto",
+    icon: <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    description: "Visualización de producto generada 100% con IA (CGI Generativo)",
     items: [
-      { id: 1, title: "Lookbook Verano", description: "Colección de temporada", type: "image", url: "", thumbnail: "" },
-      { id: 2, title: "Sesión Estudio", description: "Fotografía de producto", type: "image", url: "", thumbnail: "" },
-      { id: 3, title: "Catálogo Accesorios", description: "Complementos de moda", type: "image", url: "", thumbnail: "" },
-      { id: 4, title: "Editorial Moda", description: "Sesión conceptual", type: "image", url: "", thumbnail: "" },
-      { id: 5, title: "E-commerce Photos", description: "Para tienda online", type: "image", url: "", thumbnail: "" },
-      { id: 6, title: "Flat Lay", description: "Composición de productos", type: "image", url: "", thumbnail: "" },
+      {
+        id: "ia-mbloom",
+        title: "MBloom Body Butters",
+        description: "Set virtual botánico con simulación de luz natural.",
+        type: "image",
+        thumbnail: "/mbloom-ia-1.jpg",
+        images: ["/mbloom-ia-1.jpg", "/mbloom-ia-2.jpg"],
+      },
+      {
+        id: "ia-petcare",
+        title: "Pet Care Brush",
+        description: "Simulación de fluidos y partículas generativas.",
+        type: "image",
+        thumbnail: "/petcare-ia.jpg",
+        images: ["/petcare-ia.jpg"],
+      },
+      {
+        id: "ia-shoes",
+        title: "Sneakers Focus",
+        description: "Zapatos urbanos integrados en entornos sintéticos.",
+        type: "image",
+        thumbnail: "/sneaker-ia.jpg",
+        images: ["/sneaker-ia.jpg", "/sneaker-ia-2.jpg"],
+      },
     ],
   },
   {
-    id: "con-ia",
-    name: "Con IA",
-    icon: Sparkles,
-    description: "Catálogo generado y mejorado con inteligencia artificial",
+    id: "modelos-ia",
+    name: "Modelos IA",
+    icon: <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    description: "Avatares hiperrealistas y fashion films sintéticos",
     items: [
-      { id: 1, title: "Modelo Virtual", description: "Avatar generado con IA", type: "image", url: "", thumbnail: "" },
-      { id: 2, title: "Cambio de Fondo IA", description: "Background swap", type: "image", url: "", thumbnail: "" },
-      { id: 3, title: "Virtual Try-On", description: "Probador virtual", type: "image", url: "", thumbnail: "" },
-      { id: 4, title: "Producto 3D IA", description: "Render generativo", type: "image", url: "", thumbnail: "" },
-      { id: 5, title: "Variaciones IA", description: "Múltiples versiones", type: "image", url: "", thumbnail: "" },
-      { id: 6, title: "Lookbook IA", description: "Colección generada", type: "image", url: "", thumbnail: "" },
+      {
+        id: "ia-avatar-1",
+        title: "Campaña Cosmética",
+        description: "Modelaje hiperrealista con texturas de piel fotorrealistas.",
+        type: "image",
+        thumbnail: "/modelo-ia-1.jpg",
+        images: ["/modelo-ia-1.jpg", "/modelo-ia-2.jpg"],
+      },
+      {
+        id: "ia-macone-virtual",
+        title: "Mac One | Virtual Try-On",
+        description: "Prendas reales aplicadas sobre modelos generados por IA.",
+        type: "image",
+        thumbnail: "/macone-ia-modelo.jpg",
+        images: ["/macone-ia-modelo.jpg"],
+      },
+    ],
+  },
+  {
+    id: "editorial",
+    name: "Editorial AI",
+    icon: <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    description: "Dirección de arte, iluminación cinematográfica y conceptos visuales",
+    items: [
+      {
+        id: "ia-neon-concept",
+        title: "Concepto Neón & Humo",
+        description: "Iluminación dual retro-futurista generada por IA.",
+        type: "image",
+        thumbnail: "/neon-ia-1.jpg",
+        images: ["/neon-ia-1.jpg", "/neon-ia-2.jpg"],
+      },
     ],
   },
 ]
 
 const WHATSAPP_NUMBER = "573019132001"
 const WHATSAPP_MESSAGE =
-  "👗 ¡Hola Jesus! 👋 Estoy interesado en crear un *Catálogo de Ropa* profesional 📸✨ Me gustaría conocer tus opciones con IA y fotografía tradicional. ¿Podemos conversar? 🚀💼"
+  "🤖 ¡Hola Jesus! 👋 Vi tu portafolio de *Imágenes y CGI con Inteligencia Artificial*. Me interesa crear una campaña visual para mi marca sin necesidad de un estudio físico. ¿Podemos hablar? 🚀"
 
-// ─── Fashion Card with Spotlight ──────────────────────────────────────
+// ─── Spotlight Card (Masonry Ready) ────────────────────────────────
 
-function FashionCard({
+function SpotlightCard({
   item,
   index,
   onClick,
@@ -86,161 +134,279 @@ function FashionCard({
     setSpotlightPos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
   }
 
-  const hasContent = item.thumbnail || item.url
+  const hasThumbnail = item.thumbnail || (item.images && item.images.length > 0)
+  const displayImage = item.thumbnail || (item.images && item.images[0]) || ""
+  const imageCount = item.images ? item.images.length : 0
 
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 25 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.07, duration: 0.45 }}
+      layout
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30, delay: index * 0.05 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className="relative group cursor-pointer"
+      // mb-4 or mb-6 es vital para el layout tipo Masonry
+      className="relative cursor-pointer group rounded-xl sm:rounded-2xl break-inside-avoid mb-4 sm:mb-6"
     >
-      {/* Spotlight outer glow */}
+      {/* Spotlight border glow (Cyan/Purple) */}
       <div
-        className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        className="absolute -inset-px rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
           background: isHovered
-            ? `radial-gradient(180px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(236,72,153,0.15), transparent 60%)`
+            ? `radial-gradient(350px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.4), transparent 60%)`
             : "none",
         }}
       />
 
-      <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-500 group-hover:border-pink-500/20">
+      {/* Glass card container */}
+      <div className="relative h-full rounded-xl sm:rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+        
         {/* Inner spotlight */}
         {isHovered && (
           <div
-            className="absolute inset-0 pointer-events-none z-10"
+            className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-10"
             style={{
-              background: `radial-gradient(150px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(236,72,153,0.04), transparent 60%)`,
+              background: `radial-gradient(300px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(34,211,238,0.08), transparent 60%)`,
             }}
           />
         )}
 
-        {/* Image area — 3:4 fashion ratio */}
-        <div className="aspect-[3/4] relative bg-[#0a0b10] flex items-center justify-center overflow-hidden">
-          {hasContent ? (
+        {/* ── IA BADGE ── */}
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-cyan-400/30 bg-black/60 backdrop-blur-md shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+          <Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
+          <span className="text-[9px] sm:text-[10px] font-mono font-semibold text-cyan-300 tracking-wider">
+            100% IA
+          </span>
+        </div>
+
+        {/* Image area (Dynamic Height - NO aspect ratio forced) */}
+        <div className="relative overflow-hidden bg-black/40">
+          {hasThumbnail ? (
             <>
+              {/* Usamos w-full y h-auto para que respete vertical u horizontal */}
               <img
-                src={item.thumbnail || item.url}
+                src={displayImage}
                 alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#07080d] via-transparent to-transparent opacity-70" />
-
-              {item.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-pink-500/30 bg-pink-500/[0.1] backdrop-blur-sm flex items-center justify-center group-hover:border-pink-400/50 group-hover:bg-pink-500/[0.15] transition-all duration-300">
-                    <Play className="h-4 w-4 sm:h-5 sm:w-5 text-pink-400 ml-0.5 drop-shadow-[0_0_8px_rgba(236,72,153,0.4)]" />
-                  </div>
-                </div>
-              )}
-
-              {/* Hover info overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 z-10 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                <h3 className="text-xs sm:text-sm font-bold text-white font-mono truncate">
-                  {item.title}
-                </h3>
-                <p className="text-[10px] sm:text-xs text-white/40 truncate mt-0.5">
-                  {item.description}
-                </p>
-              </div>
             </>
           ) : (
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-lg border border-white/[0.06] bg-white/[0.02] flex items-center justify-center">
-                <ImageIcon className="h-6 w-6 text-white/15" />
-              </div>
-              <span className="text-[10px] font-mono text-white/20 tracking-widest uppercase">
+            <div className="flex flex-col items-center justify-center py-20 gap-2 sm:gap-3 text-white/30">
+              <ImageIcon className="h-8 w-8 sm:h-12 sm:w-12" />
+              <span className="text-[10px] sm:text-xs font-mono tracking-widest uppercase">
                 Próximamente
               </span>
-              {/* Scanlines */}
-              <div
-                className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px)",
-                }}
-              />
             </div>
           )}
 
-          {/* Index badge */}
-          <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-md border border-white/[0.08] bg-black/40 backdrop-blur-sm">
-            <span className="text-[9px] font-mono text-white/30 tracking-wider">
-              {String(item.id).padStart(2, "0")}
-            </span>
-          </div>
+          {/* Hover gradient for readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+          {/* Hover icon */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+            whileHover={{ scale: 1.1 }}
+          >
+            <div className="p-3 sm:p-4 rounded-full border border-purple-400/40 bg-black/40 backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+              <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6 text-purple-300" />
+            </div>
+          </motion.div>
+
+          {/* Image count badge */}
+          {imageCount > 1 && (
+            <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded border border-white/10 bg-black/50 backdrop-blur-sm">
+              <span className="text-[10px] sm:text-xs font-mono text-white/70">
+                {imageCount} variaciones
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Corner accents */}
-        <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r border-pink-500/0 group-hover:border-pink-500/20 transition-colors duration-500" />
-        <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l border-pink-500/0 group-hover:border-pink-500/20 transition-colors duration-500" />
+        {/* Content (Appears over the image on hover, or sits below depending on design. Here it sits below for Masonry) */}
+        <div className="p-4 sm:p-5 space-y-1.5 relative z-20 bg-gradient-to-b from-transparent to-[#07080d]/80">
+          <h3 className="font-bold text-white/95 font-mono tracking-wide text-xs sm:text-sm">
+            {item.title}
+          </h3>
+          <p className="text-[11px] sm:text-xs text-white/50 leading-relaxed">
+            {item.description}
+          </p>
+        </div>
       </div>
     </motion.div>
   )
 }
 
-// ─── Tab Button ───────────────────────────────────────────────────────
+// ─── Image Slider Modal (Dynamic Aspect Ratio) ─────────────────────
 
-function TabButton({
-  active,
-  onClick,
-  icon: Icon,
-  label,
+function ImageSliderModal({
+  item,
+  onClose,
 }: {
-  active: boolean
-  onClick: () => void
-  icon: typeof Camera | typeof Sparkles
-  label: string
+  item: MediaItem
+  onClose: () => void
 }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const allImages =
+    item.images && item.images.length > 0
+      ? item.images
+      : [item.thumbnail || ""]
+
+  const hasMultiple = allImages.length > 1
+  const validImages = allImages.filter((img) => img !== "")
+
+  const goNext = () => {
+    if (validImages.length > 0) {
+      setCurrentIndex((prev) => (prev + 1) % validImages.length)
+    }
+  }
+
+  const goPrev = () => {
+    if (validImages.length > 0) {
+      setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length)
+    }
+  }
+
   return (
-    <button
-      onClick={onClick}
-      className={`relative flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg font-mono text-[11px] sm:text-xs tracking-wider uppercase transition-all duration-300 ${
-        active
-          ? "text-pink-400 border border-pink-500/30 bg-pink-500/[0.08]"
-          : "text-white/30 border border-white/[0.06] bg-white/[0.02] hover:text-white/50 hover:border-white/[0.1]"
-      }`}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md"
+      onClick={onClose}
     >
-      <Icon className={`h-3.5 w-3.5 ${active ? "drop-shadow-[0_0_6px_rgba(236,72,153,0.3)]" : ""}`} />
-      {label}
-    </button>
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0, y: 10 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 10 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-5xl rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-[#07080d] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]"
+      >
+        {/* Top glow line */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
+
+        {/* Header */}
+        <div className="flex-none flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+              <span className="text-[10px] font-mono text-purple-400 tracking-widest uppercase">
+                Generación IA
+              </span>
+            </div>
+            <h3 className="text-sm sm:text-base font-mono font-bold text-white tracking-wide">
+              {item.title}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:text-white text-white/50 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Image Slider - DYNAMIC RATIO */}
+        <div className="flex-1 relative bg-black/50 min-h-0 flex items-center justify-center p-2 sm:p-4">
+          {validImages.length > 0 ? (
+            <AnimatePresence mode="wait">
+              {/* object-contain asegura que no se recorte nada, sea vertical u horizontal */}
+              <motion.img
+                key={currentIndex}
+                src={validImages[currentIndex]}
+                alt={`${item.title} - ${currentIndex + 1}`}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
+                className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg shadow-2xl"
+              />
+            </AnimatePresence>
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-3 text-white/30">
+              <ImageIcon className="h-12 w-12" />
+            </div>
+          )}
+
+          {/* Navigation arrows */}
+          {hasMultiple && validImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
+              >
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
+              >
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Thumbnail strip */}
+        {validImages.length > 1 && (
+          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-white/[0.06] bg-black/40 overflow-x-auto scrollbar-hide">
+            {validImages.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`relative flex-shrink-0 h-12 w-12 sm:h-16 sm:w-16 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                  idx === currentIndex
+                    ? "border-cyan-400 ring-2 ring-cyan-500/30 opacity-100"
+                    : "border-transparent opacity-40 hover:opacity-80"
+                }`}
+              >
+                <img
+                  src={img}
+                  alt={`Thumb ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
   )
 }
 
 // ─── Main Component ───────────────────────────────────────────────────
 
-export function GalleryCatalogoRopa() {
+export function GalleryIAGenerativa() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
-  const [activeTab, setActiveTab] = useState("sin-ia")
+  const [activeTab, setActiveTab] = useState("catalogo-producto")
 
-  const currentCategory = categories.find((c) => c.id === activeTab)
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
+  const activeCategory = categories.find((c) => c.id === activeTab)
 
   return (
-    <section id="catalogo-ropa" className="relative py-16 sm:py-24 bg-[#08090e] overflow-hidden">
-      {/* ── Background ── */}
+    <section id="galeria-ia" className="relative py-16 sm:py-24 bg-[#050508] overflow-hidden">
+      
+      {/* Background effects (Cyan & Purple AI vibe) */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[400px] sm:w-[600px] h-[400px] sm:h-[500px] bg-pink-600/[0.03] rounded-full blur-[100px] sm:blur-[140px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] bg-amber-500/[0.02] rounded-full blur-[80px] sm:blur-[120px]" />
+        <div className="absolute top-0 left-1/4 w-[400px] sm:w-[800px] h-[300px] sm:h-[500px] bg-cyan-600/[0.04] rounded-full blur-[100px] sm:blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[500px] bg-purple-600/[0.05] rounded-full blur-[90px] sm:blur-[120px]" />
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.02]"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* ── Header ── */}
+        
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -248,192 +414,107 @@ export function GalleryCatalogoRopa() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-pink-500/20 bg-pink-500/[0.05] mb-4 sm:mb-6">
-            <Shirt className="h-3 w-3 text-pink-400" />
-            <span className="text-[10px] sm:text-xs font-mono text-pink-400 tracking-widest uppercase">
-              Catálogo
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-purple-500/30 bg-purple-500/[0.08] mb-5 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+            <Sparkles className="h-3.5 w-3.5 text-purple-400 animate-pulse" />
+            <span className="text-[10px] sm:text-xs font-mono text-purple-300 tracking-widest uppercase font-semibold">
+              Innovación Visual
             </span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 font-mono tracking-tight">
-            Catálogo de{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-amber-400">
-              Ropa
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 font-mono tracking-tight">
+            Imágenes con{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
+              IA Generativa
             </span>
           </h2>
 
-          <p className="text-white/35 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
-            Fotografía de moda y catálogo de productos con producción tradicional e IA
+          <p className="text-white/50 max-w-2xl mx-auto text-xs sm:text-base leading-relaxed px-4">
+            Fotografía comercial, modelaje y CGI generativo. Elimina los costos de un estudio tradicional y crea campañas hiperrealistas impulsadas por Inteligencia Artificial.
           </p>
         </motion.div>
 
-        {/* ── Tabs ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6"
-        >
-          {categories.map((cat) => (
-            <TabButton
-              key={cat.id}
-              active={activeTab === cat.id}
-              onClick={() => setActiveTab(cat.id)}
-              icon={cat.icon}
-              label={cat.name}
-            />
-          ))}
-        </motion.div>
+        {/* Tabs */}
+        <div className="flex justify-center mb-8 sm:mb-12">
+          <div className="inline-flex gap-1 p-1.5 rounded-xl border border-white/[0.06] bg-[#0c0d14]/60 backdrop-blur-md w-full sm:w-auto overflow-x-auto scrollbar-hide">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveTab(cat.id)}
+                className={`relative flex-shrink-0 flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-[10px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-300 ${
+                  activeTab === cat.id
+                    ? "text-cyan-300"
+                    : "text-white/40 hover:text-white/70"
+                }`}
+              >
+                {activeTab === cat.id && (
+                  <motion.div
+                    layoutId="activeTabIA"
+                    className="absolute inset-0 rounded-lg bg-cyan-500/[0.12] border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  {cat.icon}
+                  <span>{cat.name}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* ── Category description ── */}
-        <AnimatePresence mode="wait">
-          {currentCategory && (
-            <motion.p
-              key={currentCategory.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-8 sm:mb-10"
-            >
-              {currentCategory.description}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-        {/* ── Grid ── */}
-        <AnimatePresence mode="wait">
-          {currentCategory && (
+        {/* Masonry Grid (Adaptable Aspect Ratio) */}
+        <LayoutGroup>
+          <AnimatePresence mode="wait">
             <motion.div
-              key={currentCategory.id}
+              key={activeTab}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4"
+              // ¡Aquí está la magia del Masonry! column-count crea las columnas y los items se acomodan solos
+              className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6"
             >
-              {currentCategory.items.map((item, index) => (
-                <FashionCard
-                  key={item.id}
+              {activeCategory?.items.map((item, index) => (
+                <SpotlightCard
+                  key={`${activeTab}-${item.id}`}
                   item={item}
                   index={index}
-                  onClick={() => item.url && setSelectedItem(item)}
+                  onClick={() => setSelectedItem(item)}
                 />
               ))}
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </LayoutGroup>
 
-        {/* ── CTA ── */}
+        {/* CTA WhatsApp */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-10 sm:mt-14 text-center"
+          className="mt-12 sm:mt-16 text-center"
         >
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-2.5 px-6 sm:px-8 py-3 sm:py-3.5 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden rounded-xl"
           >
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500/15 to-amber-500/15 border border-pink-500/30 transition-all duration-300 group-hover:from-pink-500/25 group-hover:to-amber-500/25 group-hover:border-pink-400/50" />
-            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-pink-400/50 rounded-tl-xl" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-amber-400/50 rounded-br-xl" />
-
-            <MessageCircle className="relative z-10 h-4 w-4 text-pink-400 group-hover:text-pink-300 transition-colors" />
-            <span className="relative z-10 text-white/70 group-hover:text-white/90 transition-colors">
-              Solicitar Catálogo
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 backdrop-blur-sm transition-all duration-500 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 group-hover:border-cyan-300/60 shadow-[0_0_20px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]" />
+            
+            <Sparkles className="relative z-10 h-5 w-5 text-cyan-400 group-hover:text-cyan-300 animate-pulse" />
+            <span className="relative z-10 text-white font-semibold group-hover:text-cyan-100 transition-colors">
+              Crear mi campaña IA
             </span>
           </a>
         </motion.div>
 
-        {/* ── Preview Modal ── */}
+        {/* Slider Modal */}
         <AnimatePresence>
           {selectedItem && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm"
-              onClick={() => setSelectedItem(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-3xl rounded-xl sm:rounded-2xl border border-white/[0.08] bg-[#0c0d14]/95 backdrop-blur-xl overflow-hidden"
-              >
-                {/* Top glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
-
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg border border-pink-500/20 bg-pink-500/[0.08] flex items-center justify-center">
-                      <ImageIcon className="h-4 w-4 text-pink-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm sm:text-base font-bold text-white font-mono">
-                        {selectedItem.title}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-white/30">{selectedItem.description}</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setSelectedItem(null)}
-                    className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/20 transition-all font-mono text-[10px]"
-                  >
-                    ESC
-                  </button>
-                </div>
-
-                {/* Content */}
-                <div className="p-4 sm:p-5">
-                  {selectedItem.type === "video" ? (
-                    <video
-                      src={selectedItem.url}
-                      controls
-                      className="w-full rounded-lg border border-white/[0.06]"
-                    />
-                  ) : (
-                    <img
-                      src={selectedItem.url || "/placeholder.svg"}
-                      alt={selectedItem.title}
-                      className="w-full rounded-lg border border-white/[0.06] max-h-[65vh] object-contain"
-                    />
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-3 p-4 sm:p-5 border-t border-white/[0.06]">
-                  {selectedItem.url && (
-                    <a
-                      href={selectedItem.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-pink-500/20 bg-pink-500/[0.06] text-pink-400 text-xs font-mono tracking-wider hover:bg-pink-500/[0.12] transition-all"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      Pantalla completa
-                    </a>
-                  )}
-                  <button
-                    onClick={() => setSelectedItem(null)}
-                    className="px-4 py-2 rounded-lg border border-white/[0.08] bg-white/[0.02] text-white/40 text-xs font-mono tracking-wider hover:text-white/60 transition-all"
-                  >
-                    Cerrar
-                  </button>
-                </div>
-
-                {/* Corner decorations */}
-                <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-pink-500/15 rounded-tr-2xl" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-pink-500/15 rounded-bl-2xl" />
-              </motion.div>
-            </motion.div>
+            <ImageSliderModal
+              item={selectedItem}
+              onClose={() => setSelectedItem(null)}
+            />
           )}
         </AnimatePresence>
       </div>

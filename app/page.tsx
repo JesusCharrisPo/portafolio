@@ -2,9 +2,15 @@ import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
 import { About } from "@/components/about"
 import { Services } from "@/components/services"
-import { GalleryDesarrolloWeb } from "@/components/gallery-desarrollo-web"
+
+// 🔥 CAMBIO CLAVE 1: Sin llaves
+import GalleryDesarrolloWeb from "@/components/gallery-desarrollo-web"
+
 import { GalleryAudiovisual } from "@/components/gallery-audiovisual"
-import { GalleryCatalogoRopa } from "@/components/gallery-catalogo-ropa"
+
+// 🔥 CAMBIO CLAVE 2: Sin llaves
+import GalleryCatalogoRopa from "@/components/gallery-catalogo-ropa"
+
 import { Portfolio } from "@/components/portfolio"
 import { Blog } from "@/components/blog"
 import { Contact } from "@/components/contact"

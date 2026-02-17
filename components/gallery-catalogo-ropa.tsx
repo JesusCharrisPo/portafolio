@@ -2,128 +2,106 @@
 
 import { useState, useRef, MouseEvent } from "react"
 import {
-  ExternalLink,
-  Play,
   ImageIcon,
   MessageCircle,
-  Zap,
-  Globe,
-  ShoppingCart,
+  Sparkles,
+  Camera,
+  Layers,
   ChevronLeft,
   ChevronRight,
   X,
+  Maximize2
 } from "lucide-react"
 
 // ─── Data ─────────────────────────────────────────────────────────────
 
 type MediaItem = {
-  id: number
+  id: number | string
   title: string
   description: string
   type: "image" | "video"
   images: string[]
   thumbnail: string
-  liveUrl?: string
 }
 
 type Category = {
   id: string
   name: string
   icon: React.ReactNode
+  description: string
   items: MediaItem[]
 }
 
 const categories: Category[] = [
   {
-    id: "shopify",
-    name: "Shopify",
-    icon: <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    id: "catalogo-producto",
+    name: "Catálogo Producto",
+    icon: <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    description: "Visualización de producto generada 100% con IA (CGI Generativo)",
     items: [
       {
-        id: 1,
-        title: "Mac One | E-commerce Streetwear",
-        description: "Tienda Shopify de alta conversión con integración de pagos contra entrega (COD), recuperación de carritos y diseño responsive adaptado a la estética de la marca.",
+        id: "ia-mbloom",
+        title: "MBloom Body Butters",
+        description: "Set virtual botánico con simulación de luz natural.",
         type: "image",
-        thumbnail: "/mac1.jpg",
-        images: ["/mac1.jpg","/mac2.jpg","/mac3.jpg"],
+        thumbnail: "/mbloom-ia-1.jpg",
+        images: ["/mbloom-ia-1.jpg", "/mbloom-ia-2.jpg"],
       },
       {
-        id: 2,
-        title: "Tienda Maringlow | Beauty & Skincare",
-        description: "E-commerce de nicho belleza enfocado en la confianza del consumidor. Integra sistema de reseñas verificadas (prueba social) y pasarelas de pago locales para un checkout sin fricción.",
+        id: "ia-petcare",
+        title: "Pet Care Brush",
+        description: "Simulación de fluidos y partículas generativas.",
         type: "image",
-        thumbnail: "/mar1.jpg",
-        images: ["/mar1.jpg","/mar2.jpg","/mar3.jpg"],
+        thumbnail: "/petcare-ia.jpg",
+        images: ["/petcare-ia.jpg"],
       },
       {
-        id: 3,
-        title: "Tienda Henry Rivera | Urban Shoes",
-        description: "E-commerce de calzado urbano con identidad visual de alto impacto (High-Contrast). Experiencia de compra mobile-first optimizada para el mercado joven.",
+        id: "ia-shoes",
+        title: "Sneakers Focus",
+        description: "Zapatos urbanos integrados en entornos sintéticos.",
         type: "image",
-        thumbnail: "/henr1.jpg",
-        images: ["/henr1.jpg","/henr2.jpg","/henr3.jpg"],
+        thumbnail: "/sneaker-ia.jpg",
+        images: ["/sneaker-ia.jpg", "/sneaker-ia-2.jpg"],
       },
     ],
   },
   {
-    id: "wordpress",
-    name: "WordPress",
-    icon: <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    id: "modelos-ia",
+    name: "Modelos IA",
+    icon: <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    description: "Avatares hiperrealistas y fashion films sintéticos",
     items: [
       {
-        id: 1,
-        title: "García & Asociados | Firma Legal Corporativa",
-        description: "Sitio WordPress corporativo diseñado para transmitir autoridad y generar leads (clientes potenciales). Estructura optimizada para SEO local, con formularios de contacto de alta conversión e integración de agendamiento de citas.",
+        id: "ia-avatar-1",
+        title: "Campaña Cosmética",
+        description: "Modelaje hiperrealista con texturas de piel fotorrealistas.",
         type: "image",
-        thumbnail: "/abo1.jpg",
-        images: ["/abo1.jpg","/abo2.jpg"],
+        thumbnail: "/modelo-ia-1.jpg",
+        images: ["/modelo-ia-1.jpg", "/modelo-ia-2.jpg"],
       },
       {
-        id: 2,
-        title: "Agencia de Seguros Blog | Estrategia SEO",
-        description: "Sitio web corporativo de alto rendimiento para agencia de seguros. Diseñado para captar leads cualificados mediante formularios de cotización especializados. Estructura optimizada para motores de búsqueda (SEO).",
+        id: "ia-macone-virtual",
+        title: "Mac One | Virtual Try-On",
+        description: "Prendas reales aplicadas sobre modelos generados por IA.",
         type: "image",
-        thumbnail: "/tru1.jpg",
-        images: ["/tru1.jpg","/tru2.jpg"],
-      },
-      {
-        id: 3,
-        title: "SG Windows | Servicios Industriales",
-        description: "Sitio web para empresa de servicios (vidrio y aluminio). Enfoque en captación de clientes locales mediante botones de llamada directa, integración de WhatsApp flotante y galería de proyectos para demostrar calidad.",
-        type: "image",
-        thumbnail: "/sg1.jpg",
-        images: ["/sg1.jpg","/sg2.jpg"],
+        thumbnail: "/macone-ia-modelo.jpg",
+        images: ["/macone-ia-modelo.jpg"],
       },
     ],
   },
   {
-    id: "dropshipping",
-    name: "Drop",
-    icon: <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    id: "editorial",
+    name: "Editorial AI",
+    icon: <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    description: "Dirección de arte, iluminación cinematográfica y conceptos visuales",
     items: [
       {
-        id: 1,
-        title: "Tienda Nicho",
-        description: "Dropshipping automatizado",
+        id: "ia-neon-concept",
+        title: "Concepto Neón & Humo",
+        description: "Iluminación dual retro-futurista generada por IA.",
         type: "image",
-        thumbnail: "",
-        images: [],
-      },
-      {
-        id: 2,
-        title: "Multi-producto",
-        description: "Catálogo extenso",
-        type: "image",
-        thumbnail: "",
-        images: [],
-      },
-      {
-        id: 3,
-        title: "One Product Store",
-        description: "Enfocado en conversión",
-        type: "image",
-        thumbnail: "",
-        images: [],
+        thumbnail: "/neon-ia-1.jpg",
+        images: ["/neon-ia-1.jpg", "/neon-ia-2.jpg"],
       },
     ],
   },
@@ -131,9 +109,9 @@ const categories: Category[] = [
 
 const WHATSAPP_NUMBER = "573019132001"
 const WHATSAPP_MESSAGE =
-  "🚀 ¡Hola Jesus! 👋 Estoy interesado en tus servicios de *Desarrollo Web* 💻 Me gustaría saber más sobre cómo puedes ayudarme con mi proyecto. ¿Podemos agendar una llamada? 📞✨"
+  "🤖 ¡Hola Jesus! 👋 Vi tu portafolio de *Imágenes y CGI con Inteligencia Artificial*. Me interesa crear una campaña visual para mi marca sin necesidad de un estudio físico. ¿Podemos hablar? 🚀"
 
-// ─── Spotlight Project Card (Ligera) ───────────────────────────────
+// ─── Spotlight Card (Masonry Ready & Ligera) ───────────────────────
 
 function SpotlightCard({
   item,
@@ -163,56 +141,49 @@ function SpotlightCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className="relative cursor-pointer group rounded-xl sm:rounded-2xl transition-transform duration-300 hover:-translate-y-1"
+      className="relative cursor-pointer group rounded-xl sm:rounded-2xl break-inside-avoid mb-4 sm:mb-6 transition-transform duration-300 hover:-translate-y-1"
     >
-      {/* Spotlight border glow */}
+      {/* Spotlight border glow (Cyan/Purple) */}
       <div
         className="absolute -inset-px rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
           background: isHovered
-            ? `radial-gradient(350px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(0,255,200,0.25), transparent 60%)`
+            ? `radial-gradient(350px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.4), transparent 60%)`
             : "none",
         }}
       />
 
-      {/* Glass card */}
+      {/* Glass card container */}
       <div className="relative h-full rounded-xl sm:rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+        
+        {/* Inner spotlight */}
         {isHovered && (
           <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+            className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-10"
             style={{
-              background: `radial-gradient(300px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(0,255,200,0.06), transparent 60%)`,
+              background: `radial-gradient(300px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(34,211,238,0.08), transparent 60%)`,
             }}
           />
         )}
 
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.03] z-10"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px)",
-          }}
-        />
+        {/* ── IA BADGE ── */}
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-cyan-400/30 bg-black/60 backdrop-blur-md shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+          <Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
+          <span className="text-[9px] sm:text-[10px] font-mono font-semibold text-cyan-300 tracking-wider">
+            100% IA
+          </span>
+        </div>
 
-        <div className="aspect-video relative overflow-hidden bg-black/40">
+        {/* Image area (Dynamic Height) */}
+        <div className="relative overflow-hidden bg-black/40">
           {hasThumbnail ? (
-            <>
-              <img
-                src={displayImage}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              />
-              {item.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-cyan-400/30 blur-xl animate-pulse" />
-                    <Play className="relative h-10 w-10 sm:h-14 sm:w-14 text-cyan-400 drop-shadow-[0_0_12px_rgba(0,255,200,0.6)] hover:scale-110 transition-transform" />
-                  </div>
-                </div>
-              )}
-            </>
+            <img
+              src={displayImage}
+              alt={item.title}
+              className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full gap-2 sm:gap-3 text-white/30">
+            <div className="flex flex-col items-center justify-center py-20 gap-2 sm:gap-3 text-white/30">
               <ImageIcon className="h-8 w-8 sm:h-12 sm:w-12" />
               <span className="text-[10px] sm:text-xs font-mono tracking-widest uppercase">
                 Próximamente
@@ -220,43 +191,41 @@ function SpotlightCard({
             </div>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* Hover gradient for readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="p-2.5 sm:p-3 rounded-full border border-cyan-400/40 bg-black/40 backdrop-blur-sm hover:scale-110 transition-transform">
-              <ExternalLink className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400 drop-shadow-[0_0_8px_rgba(0,255,200,0.5)]" />
+          {/* Hover icon */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
+            <div className="p-3 sm:p-4 rounded-full border border-purple-400/40 bg-black/40 backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:scale-110 transition-transform">
+              <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6 text-purple-300" />
             </div>
           </div>
 
+          {/* Image count badge */}
           {imageCount > 1 && (
-            <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 px-2 py-0.5 rounded border border-white/10 bg-black/50 backdrop-blur-sm">
-              <span className="text-[9px] sm:text-[10px] font-mono text-white/50">
-                {imageCount} fotos
+            <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded border border-white/10 bg-black/50 backdrop-blur-sm">
+              <span className="text-[10px] sm:text-xs font-mono text-white/70">
+                {imageCount} variaciones
               </span>
             </div>
           )}
         </div>
 
-        <div className="p-3 sm:p-5 space-y-1">
-          <h3 className="font-semibold text-white/90 font-mono tracking-wide text-xs sm:text-sm">
+        {/* Content */}
+        <div className="p-4 sm:p-5 space-y-1.5 relative z-20 bg-gradient-to-b from-transparent to-[#07080d]/80">
+          <h3 className="font-bold text-white/95 font-mono tracking-wide text-xs sm:text-sm">
             {item.title}
           </h3>
-          <p className="text-[11px] sm:text-xs text-white/40 leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-white/50 leading-relaxed">
             {item.description}
           </p>
-          <div className="pt-2 sm:pt-3">
-            <div className="h-px w-full bg-gradient-to-r from-cyan-500/40 via-transparent to-purple-500/40" />
-          </div>
         </div>
-
-        <div className="absolute top-0 right-0 w-3 h-3 sm:w-4 sm:h-4 border-t border-r border-cyan-500/20" />
-        <div className="absolute bottom-0 left-0 w-3 h-3 sm:w-4 sm:h-4 border-b border-l border-cyan-500/20" />
       </div>
     </div>
   )
 }
 
-// ─── Image Slider Modal (Ligero) ─────────────────────────────────────
+// ─── Image Slider Modal (Ligero) ───────────────────────────────────
 
 function ImageSliderModal({
   item,
@@ -288,127 +257,93 @@ function ImageSliderModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md transition-opacity"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-4xl rounded-xl sm:rounded-2xl border border-white/[0.08] bg-[#0c0d14]/95 backdrop-blur-xl overflow-hidden animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-5xl rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-[#07080d] shadow-2xl overflow-hidden flex flex-col max-h-[95vh] animate-in zoom-in-95 duration-200"
       >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+        {/* Top glow line */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
 
-        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
+        {/* Header */}
+        <div className="flex-none flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
           <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+              <span className="text-[10px] font-mono text-purple-400 tracking-widest uppercase">
+                Generación IA
+              </span>
+            </div>
             <h3 className="text-sm sm:text-base font-mono font-bold text-white tracking-wide">
               {item.title}
             </h3>
-            <p className="text-[10px] sm:text-xs text-white/30 mt-0.5">
-              {item.description}
-            </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 sm:p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
-            aria-label="Cerrar"
+            className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:text-white text-white/50 transition-colors"
           >
-            <X className="h-4 w-4 text-white/50" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="relative">
-          <div className="aspect-video relative overflow-hidden bg-black/60">
-            {validImages.length > 0 ? (
-              <img
-                key={currentIndex}
-                src={validImages[currentIndex]}
-                alt={`${item.title} - ${currentIndex + 1}`}
-                className="w-full h-full object-cover animate-in fade-in duration-300"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-white/30">
-                <ImageIcon className="h-12 w-12" />
-                <span className="text-xs font-mono tracking-widest uppercase">
-                  Próximamente
-                </span>
-              </div>
-            )}
-
-            {hasMultiple && validImages.length > 1 && (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    goPrev()
-                  }}
-                  className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 hover:border-cyan-500/20 transition-all group"
-                  aria-label="Anterior"
-                >
-                  <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-white/50 group-hover:text-cyan-400 transition-colors" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    goNext()
-                  }}
-                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 hover:border-cyan-500/20 transition-all group"
-                  aria-label="Siguiente"
-                >
-                  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-white/50 group-hover:text-cyan-400 transition-colors" />
-                </button>
-              </>
-            )}
-
-            {validImages.length > 1 && (
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full border border-white/10 bg-black/50 backdrop-blur-sm">
-                <span className="text-[10px] sm:text-xs font-mono text-white/50">
-                  {currentIndex + 1} / {validImages.length}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {validImages.length > 1 && (
-            <div className="flex gap-1.5 sm:gap-2 p-3 sm:p-4 overflow-x-auto scrollbar-hide">
-              {validImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`relative flex-shrink-0 w-14 h-10 sm:w-20 sm:h-14 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                    idx === currentIndex
-                      ? "border-cyan-500/50 ring-1 ring-cyan-500/20"
-                      : "border-white/[0.06] hover:border-white/15"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`Thumbnail ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                  {idx === currentIndex && (
-                    <div className="absolute inset-0 bg-cyan-500/10" />
-                  )}
-                </button>
-              ))}
+        {/* Image Slider - DYNAMIC RATIO */}
+        <div className="flex-1 relative bg-black/50 min-h-0 flex items-center justify-center p-2 sm:p-4">
+          {validImages.length > 0 ? (
+            <img
+              key={currentIndex}
+              src={validImages[currentIndex]}
+              alt={`${item.title} - ${currentIndex + 1}`}
+              className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg shadow-2xl animate-in fade-in duration-300"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-3 text-white/30">
+              <ImageIcon className="h-12 w-12" />
             </div>
+          )}
+
+          {/* Navigation arrows */}
+          {hasMultiple && validImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
+              >
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
+              >
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
+              </button>
+            </>
           )}
         </div>
 
-        {item.liveUrl && (
-          <div className="p-4 sm:p-5 border-t border-white/[0.06]">
-            <a
-              href={item.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg border border-cyan-500/30 bg-cyan-500/[0.08] text-cyan-400 text-[10px] sm:text-xs font-mono tracking-wider uppercase hover:bg-cyan-500/[0.15] transition-colors"
-            >
-              Ver sitio en vivo
-              <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-            </a>
+        {/* Thumbnail strip */}
+        {validImages.length > 1 && (
+          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-white/[0.06] bg-black/40 overflow-x-auto scrollbar-hide">
+            {validImages.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`relative flex-shrink-0 h-12 w-12 sm:h-16 sm:w-16 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all duration-300 ${
+                  idx === currentIndex
+                    ? "border-cyan-400 ring-2 ring-cyan-500/30 opacity-100"
+                    : "border-transparent opacity-40 hover:opacity-80"
+                }`}
+              >
+                <img
+                  src={img}
+                  alt={`Thumb ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
           </div>
         )}
-
-        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-cyan-500/15" />
-        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-cyan-500/15" />
       </div>
     </div>
   )
@@ -416,79 +351,78 @@ function ImageSliderModal({
 
 // ─── Main Component (Ligero) ──────────────────────────────────────────
 
-export function GalleryDesarrolloWeb() {
+// OJO AQUÍ: Usamos export default para que sea fácil de importar en page.tsx
+export default function GalleryCatalogoRopa() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
-  const [activeTab, setActiveTab] = useState("shopify")
+  const [activeTab, setActiveTab] = useState("catalogo-producto")
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
   const activeCategory = categories.find((c) => c.id === activeTab)
 
-  const getFullName = (id: string) => {
-    if (id === "dropshipping") return "Dropshipping"
-    return categories.find((c) => c.id === id)?.name || ""
-  }
-
   return (
-    <section
-      id="galeria-web"
-      className="relative py-12 sm:py-24 bg-[#07080d] overflow-hidden"
-    >
+    <section id="galeria-ia" className="relative py-16 sm:py-24 bg-[#050508] overflow-hidden">
+      
+      {/* Background effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[800px] h-[300px] sm:h-[500px] bg-cyan-500/[0.04] rounded-full blur-[80px] sm:blur-[120px]" />
-        <div className="absolute bottom-0 right-0 w-[300px] sm:w-[500px] h-[250px] sm:h-[400px] bg-purple-600/[0.04] rounded-full blur-[70px] sm:blur-[100px]" />
+        <div className="absolute top-0 left-1/4 w-[400px] sm:w-[800px] h-[300px] sm:h-[500px] bg-cyan-600/[0.04] rounded-full blur-[100px] sm:blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[500px] bg-purple-600/[0.05] rounded-full blur-[90px] sm:blur-[120px]" />
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.02]"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/[0.05] mb-4 sm:mb-6">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] sm:text-xs font-mono text-cyan-400 tracking-widest uppercase">
-              PORTAFOLIO - MIS TRABAJOS REALIZADOS
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="text-center mb-10 sm:mb-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-purple-500/30 bg-purple-500/[0.08] mb-5 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+            <Sparkles className="h-3.5 w-3.5 text-purple-400 animate-pulse" />
+            <span className="text-[10px] sm:text-xs font-mono text-purple-300 tracking-widest uppercase font-semibold">
+              Innovación Visual
             </span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-3 sm:mb-4 font-mono tracking-tight">
-            Desarrollo{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-              Web
+
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 font-mono tracking-tight">
+            Imágenes con{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
+              IA Generativa
             </span>
           </h2>
-          <p className="text-white/40 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
-            Tu visión es única, tu web también debería serlo. Transformo ideas abstractas en Negocios Digitales Rentables mediante Embudos de Venta estratégicos. A continuación, explora mi colección de proyectos realizados en Shopify, WordPress y Dropshipping con un estándar de calidad superior.
+
+          <p className="text-white/50 max-w-2xl mx-auto text-xs sm:text-base leading-relaxed px-4">
+            Fotografía comercial, modelaje y CGI generativo. Elimina los costos de un estudio tradicional y crea campañas hiperrealistas impulsadas por Inteligencia Artificial.
           </p>
         </div>
 
+        {/* Tabs */}
         <div className="flex justify-center mb-8 sm:mb-12">
-          <div className="inline-flex gap-0.5 sm:gap-1 p-1 rounded-lg sm:rounded-xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm w-full max-w-md sm:w-auto">
+          <div className="inline-flex gap-1 p-1.5 rounded-xl border border-white/[0.06] bg-[#0c0d14]/60 backdrop-blur-md w-full sm:w-auto overflow-x-auto scrollbar-hide">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveTab(cat.id)}
-                className={`relative flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-[10px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-300 ${
+                className={`relative flex-shrink-0 flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-[10px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-300 ${
                   activeTab === cat.id
-                    ? "text-cyan-300 bg-cyan-500/[0.1] border border-cyan-500/20"
-                    : "text-white/40 hover:text-white/60 border border-transparent"
+                    ? "text-cyan-300 bg-cyan-500/[0.12] border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                    : "text-white/40 hover:text-white/70 border border-transparent"
                 }`}
               >
-                <span className="relative z-10 flex items-center gap-1 sm:gap-2">
+                <span className="relative z-10 flex items-center gap-2">
                   {cat.icon}
-                  <span className="hidden sm:inline">{getFullName(cat.id)}</span>
-                  <span className="sm:hidden">{cat.name}</span>
+                  <span>{cat.name}</span>
                 </span>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-in fade-in duration-500">
-          {activeCategory?.items.map((item) => (
+        {/* Masonry Grid */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6 animate-in fade-in duration-500">
+          {activeCategory?.items.map((item, index) => (
             <SpotlightCard
               key={`${activeTab}-${item.id}`}
               item={item}
@@ -497,23 +431,24 @@ export function GalleryDesarrolloWeb() {
           ))}
         </div>
 
-        <div className="mt-10 sm:mt-16 text-center">
+        {/* CTA WhatsApp */}
+        <div className="mt-12 sm:mt-16 text-center">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden hover:scale-105 transition-transform duration-300"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden rounded-xl hover:scale-105 transition-transform duration-300"
           >
-            <div className="absolute inset-0 rounded-lg sm:rounded-xl border border-cyan-500/30 bg-cyan-500/[0.06] backdrop-blur-sm transition-all duration-300 group-hover:bg-cyan-500/[0.12] group-hover:border-cyan-400/50" />
-            <div className="absolute top-0 left-0 w-2.5 h-2.5 sm:w-3 sm:h-3 border-t-2 border-l-2 border-cyan-400/60 rounded-tl-lg sm:rounded-tl-xl" />
-            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 border-b-2 border-r-2 border-cyan-400/60 rounded-br-lg sm:rounded-br-xl" />
-            <MessageCircle className="relative z-10 h-4 w-4 sm:h-5 sm:w-5 text-cyan-400" />
-            <span className="relative z-10 text-cyan-300 group-hover:text-cyan-200 transition-colors">
-              Solicitar Propuesta
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 backdrop-blur-sm transition-all duration-500 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 group-hover:border-cyan-300/60 shadow-[0_0_20px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]" />
+            
+            <Sparkles className="relative z-10 h-5 w-5 text-cyan-400 group-hover:text-cyan-300 animate-pulse" />
+            <span className="relative z-10 text-white font-semibold group-hover:text-cyan-100 transition-colors">
+              Crear mi campaña IA
             </span>
           </a>
         </div>
 
+        {/* Modal */}
         {selectedItem && (
           <ImageSliderModal
             item={selectedItem}

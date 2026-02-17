@@ -416,7 +416,7 @@ function ImageSliderModal({
 
 // ─── Main Component (Ligero) ──────────────────────────────────────────
 
-export default function GalleryDesarrolloWeb() {
+export function GalleryDesarrolloWeb() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeTab, setActiveTab] = useState("shopify")
 

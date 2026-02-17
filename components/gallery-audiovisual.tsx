@@ -15,7 +15,6 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
 
 type MediaItem = {
   id: number
@@ -63,14 +62,14 @@ const categories: MainCategory[] = [
           { id: 3, title: "Oxxo | Urban Styling Concept", description: "Dirección creativa de video de styling. Uso de locaciones cotidianas para crear una estética urbana cruda y conectar la moda con el estilo de vida de la calle.", type: "video", url: "/OXXO.mp4", thumbnail: "/OXXO.mp4", duration: "0:37" },
           { id: 4, title: "Exhibición de Zapatos | Transiciones Dinámicas", description: "Creación de contenido orgánico en tendencia diseñado para alta retención (Reels/TikTok). Uso de modelaje estático y transiciones invisibles en cámara para destacar la rotación de modelos de calzado con un ritmo visual magnético.", type: "video", url: "/ZAPATOST.mp4", thumbnail: "/ZAPATOST.mp4", duration: "0:16" },
           { id: 5, title: "Cultura de Barbería | Fashion Film Retro B/N", description: "Pieza audiovisual en blanco y negro orientada a conectar el streetwear con las raíces de la cultura urbana. Dirección de arte en locación real, donde la acción del corte de cabello (grooming) complementa la exhibición orgánica de las prendas, aportando una estética cruda, nostálgica y auténtica a la marca", type: "video", url: "/Barbería.mp4", thumbnail: "/Barbería.mp4", duration: "0:27" },
-		  { id: 6, title: "Editorial Old Money | Campaña Cinematográfica VHS", description: "Fashion film guionizado con estética retro (formato VHS) grabado en locación costera. Dirección de arte, actuación y estilismo orientados a transmitir lujo, nostalgia y la exclusividad del estilo de vida 'Old Money'.", type: "video", url: "/oldmoney.mp4", thumbnail: "/oldmoney.mp4", duration: "0:23" },
-		  { id: 7, title: "Centro | Raíces & Cultura", description: "Pieza audiovisual conceptual dirigida a exaltar las raíces y la cultura del asfalto. Dirección de arte enfocada en cómo la indumentaria define nuestra identidad.", type: "video", url: "/CENTRO.mp4", thumbnail: "/CENTRO.mp4", duration: "0:23" },
+          { id: 6, title: "Editorial Old Money | Campaña Cinematográfica VHS", description: "Fashion film guionizado con estética retro (formato VHS) grabado en locación costera. Dirección de arte, actuación y estilismo orientados a transmitir lujo, nostalgia y la exclusividad del estilo de vida 'Old Money'.", type: "video", url: "/oldmoney.mp4", thumbnail: "/oldmoney.mp4", duration: "0:23" },
+          { id: 7, title: "Centro | Raíces & Cultura", description: "Pieza audiovisual conceptual dirigida a exaltar las raíces y la cultura del asfalto. Dirección de arte enfocada en cómo la indumentaria define nuestra identidad.", type: "video", url: "/CENTRO.mp4", thumbnail: "/CENTRO.mp4", duration: "0:23" },
           { id: 8, title: "Mac One | Experiencia de Tienda.", description: "Dirección audiovisual para el evento de lanzamiento de la tienda física. Captura dinámica de la experiencia del cliente (Retail Experience) para transmitir la atmósfera de la marca y consolidar el 'hype' de la comunidad.", type: "video", url: "/TIENDA.mp4", thumbnail: "/TIENDA.mp4", duration: "0:39" },
           { id: 9, title: "Mac One | Discolandia Fashion Film", description: "Dirección y producción audiovisual en locación histórica (tienda de vinilos LP). Storytelling visual diseñado para conectar la herencia cultural con la identidad de la marca.", type: "video", url: "/DISCOLANDIA.mp4", thumbnail: "DISCOLANDIA.mp4", duration: "0:41" },
           { id: 10, title: "Mac One | Street Medallo Editorial", description: "Fashion film producido en las calles de Medellín. Cinematografía dinámica enfocada en el modelaje urbano para exhibir el fit y fluidez de las prendas en su entorno natural.", type: "video", url: "/STREETMEDALLO.mp4", thumbnail: "/STREETMEDALLO.mp4", duration: "0:16" },
-		  { id: 11, title: "Estudio Marenco | Dirección Creativa Comercial", description: "Participación en la dirección y producción de un spot comercial en entorno de estudio profesional. Enfoque técnico en iluminación, diseño de set y ángulos de cámara para elevar el valor visual del espacio.", type: "video", url: "/SPOTMARENCO.mp4", thumbnail: "/SPOTMARENCO.mp4", duration: "0:27" },
-		  { id: 12, title: "Perspectiva Ojo de Pez | Estética Urbana", description: "Producción audiovisual dinámica utilizando un lente súper gran angular (Ojo de Pez). Esta técnica de distorsión visual aporta un carácter rebelde e inmersivo al video, rompiendo los esquemas tradicionales para destacar la indumentaria de forma creativa y atractiva para el público joven.", type: "video", url: "/KEVINOP.mp4", thumbnail: "/KEVINOP.mp4", duration: "0:26" },
-		],
+          { id: 11, title: "Estudio Marenco | Dirección Creativa Comercial", description: "Participación en la dirección y producción de un spot comercial en entorno de estudio profesional. Enfoque técnico en iluminación, diseño de set y ángulos de cámara para elevar el valor visual del espacio.", type: "video", url: "/SPOTMARENCO.mp4", thumbnail: "/SPOTMARENCO.mp4", duration: "0:27" },
+          { id: 12, title: "Perspectiva Ojo de Pez | Estética Urbana", description: "Producción audiovisual dinámica utilizando un lente súper gran angular (Ojo de Pez). Esta técnica de distorsión visual aporta un carácter rebelde e inmersivo al video, rompiendo los esquemas tradicionales para destacar la indumentaria de forma creativa y atractiva para el público joven.", type: "video", url: "/KEVINOP.mp4", thumbnail: "/KEVINOP.mp4", duration: "0:26" },
+        ],
       },
       {
         id: "horizontal-sin-ia",
@@ -98,8 +97,8 @@ const categories: MainCategory[] = [
         items: [
           { id: 1, title: "Cepillo Dispensador para Mascotas | CGI y Simulación de Fluidos(IA)", description: "Visualización comercial generada con Inteligencia Artificial para un innovador cepillo de baño con dispensador de jabón para perros. Integración de simulaciones hiperrealistas de agua y dinámicas de fluidos para destacar la funcionalidad del producto, logrando un acabado de nivel televisivo sin necesidad de rodaje físico.", type: "video", url: "/cepillo .mp4", thumbnail: "/cepillo .mp4", duration: "0:15" },
           { id: 2, title: "Avatares Hiperrealistas y Efectos Visuales con (IA)", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "/1002.mp4", thumbnail: "/1002.mp4", duration: "0:08" },
-        
-		],
+          { id: 3, title: "Avatares Hiperrealistas y Efectos Visuales con (IA)", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "/1002.mp4", thumbnail: "/1002.mp4", duration: "0:08" },
+        ],
       },
       {
         id: "horizontal-con-ia",
@@ -110,7 +109,7 @@ const categories: MainCategory[] = [
           { id: 1, title: "Visualizer Musical | Animación Generativa (IA)", description: "Dirección de arte y animación mediante Inteligencia Artificial para la industria musical (formato Visualizer / Spotify Canvas). Transformación de un concepto estático en una escena de suspenso inmersiva con estética 'retro-slasher' e iluminación cinematográfica, ideal para elevar el lanzamiento de sencillos y retener la atención en plataformas de streaming.", type: "video", url: "/0930.mp4", thumbnail: "/0930.mp4", duration: "0:15" },
           { id: 2, title: "Videoclip Musical Urbano | Cinematografía Generativa (IA)", description: "Dirección y desarrollo de un videoclip oficial completo para el género Rap/Hip-Hop, renderizado 100% mediante Inteligencia Artificial. Creación de una atmósfera hiperrealista y cruda con iluminación nocturna, efectos atmosféricos (humo, luces de ciudad) y una narrativa visual coherente (storytelling). Esta pieza demuestra la capacidad de sustituir rodajes de alto presupuesto, entregando un producto cinematográfico que conecta perfectamente con la estética de la calle.", type: "video", url: "", thumbnail: "", duration: "" },
           { id: 3, title: "Animación IA", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "", thumbnail: "", duration: "" },
-		],
+        ],
       },
     ],
   },
@@ -120,11 +119,10 @@ const WHATSAPP_NUMBER = "573019132001"
 const WHATSAPP_MESSAGE =
   "🎬 ¡Hola Jesus! 👋 Me interesa tu servicio de *Producción Audiovisual* 🎥✨ Quiero crear contenido profesional para mi marca. ¿Podemos hablar sobre mi proyecto? 🚀📞"
 
-// ─── Media Card with Spotlight ────────────────────────────────────────
+// ─── Media Card with Spotlight (Limpia sin Framer Motion) ─────────────
 
 function MediaCard({
   item,
-  index,
   aspect,
   onClick,
 }: {
@@ -147,17 +145,13 @@ function MediaCard({
   const aspectClass = aspect === "vertical" ? "aspect-[9/16]" : "aspect-video"
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.06, duration: 0.4 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className="relative group cursor-pointer"
+      className="relative group cursor-pointer transition-transform duration-300 hover:-translate-y-1"
     >
       {/* Spotlight outer glow */}
       <div
@@ -248,11 +242,11 @@ function MediaCard({
         <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l border-purple-500/0 group-hover:border-purple-500/20 transition-colors duration-500" />
         <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r border-purple-500/0 group-hover:border-purple-500/20 transition-colors duration-500" />
       </div>
-    </motion.div>
+    </div>
   )
 }
 
-// ─── Tab Button ───────────────────────────────────────────────────────
+// ─── Tab Button (Ligero) ──────────────────────────────────────────────
 
 function TabButton({
   active,
@@ -279,17 +273,10 @@ function TabButton({
       >
         <Icon className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${active ? "drop-shadow-[0_0_6px_rgba(168,85,247,0.3)]" : ""}`} />
         {label}
-        {active && (
-          <motion.div
-            layoutId="activeTabGlow"
-            className="absolute inset-0 rounded-lg border border-purple-500/10"
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          />
-        )}
       </button>
       {/* Tooltip */}
       {tooltip && (
-        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono text-white/50 whitespace-nowrap opacity-0 group-hover/tab:opacity-100 transition-opacity duration-300 pointer-events-none hidden sm:block">
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono text-white/50 whitespace-nowrap opacity-0 group-hover/tab:opacity-100 transition-opacity duration-300 pointer-events-none hidden sm:block z-20">
           {tooltip}
         </div>
       )}
@@ -297,7 +284,7 @@ function TabButton({
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────
+// ─── Main Component (Ligero) ──────────────────────────────────────────
 
 export function GalleryAudiovisual() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
@@ -328,9 +315,9 @@ export function GalleryAudiovisual() {
 
   const getGridClass = () => {
     if (currentSubcategory?.aspect === "vertical") {
-      return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
+      return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 animate-in fade-in duration-500"
     }
-    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
+    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 animate-in fade-in duration-500"
   }
 
   return (
@@ -351,13 +338,7 @@ export function GalleryAudiovisual() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Header ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10 sm:mb-14"
-        >
+        <div className="text-center mb-10 sm:mb-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-purple-500/20 bg-purple-500/[0.05] mb-4 sm:mb-6">
             <Film className="h-3 w-3 text-purple-400" />
             <span className="text-[10px] sm:text-xs font-mono text-purple-400 tracking-widest uppercase">
@@ -375,16 +356,10 @@ export function GalleryAudiovisual() {
           <p className="text-white/35 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
             Galería de videos con producción tradicional y potenciada con IA
           </p>
-        </motion.div>
+        </div>
 
         {/* ── Main Tabs (Sin IA / Con IA) ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6"
-        >
+        <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
           {categories.map((cat) => (
             <TabButton
               key={cat.id}
@@ -395,30 +370,18 @@ export function GalleryAudiovisual() {
               tooltip={cat.id === "sin-ia" ? "Videos grabados con equipo profesional" : "Videos creados con inteligencia artificial"}
             />
           ))}
-        </motion.div>
+        </div>
 
         {/* ── Category description ── */}
-        <AnimatePresence mode="wait">
-          {currentCategory && (
-            <motion.p
-              key={currentCategory.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-5 sm:mb-6"
-            >
-              {currentCategory.description}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {currentCategory && (
+          <p className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-5 sm:mb-6 animate-in fade-in duration-300">
+            {currentCategory.description}
+          </p>
+        )}
 
         {/* ── Sub Tabs (Vertical / Horizontal) ── */}
         {currentCategory && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-center gap-2 mb-4 sm:mb-5"
-          >
+          <div className="flex justify-center gap-2 mb-4 sm:mb-5 animate-in fade-in duration-300">
             {currentCategory.subcategories.map((sub) => (
               <TabButton
                 key={sub.id}
@@ -429,52 +392,35 @@ export function GalleryAudiovisual() {
                 tooltip={sub.aspect === "vertical" ? "Reels en formato 9:16" : "Videos en formato 16:9"}
               />
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* ── Guide text ── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex items-center justify-center gap-1.5 mb-6 sm:mb-8"
-        >
+        <div className="flex items-center justify-center gap-1.5 mb-6 sm:mb-8 animate-in fade-in duration-500">
           <Info className="h-3 w-3 text-white/20" />
           <p className="text-[10px] sm:text-xs font-mono text-white/20 text-center">
             Selecciona una categoría y haz click en cualquier video para reproducirlo
           </p>
-        </motion.div>
+        </div>
 
         {/* ── Grid ── */}
-        <AnimatePresence mode="wait">
-          {currentSubcategory && (
-            <motion.div
-              key={activeSubTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className={getGridClass()}
-            >
-              {visibleItems.map((item, index) => (
-                <MediaCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  aspect={currentSubcategory.aspect}
-                  onClick={() => (item.url || item.thumbnail) && setSelectedItem(item)}
-                />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {currentSubcategory && (
+          <div key={activeSubTab} className={getGridClass()}>
+            {visibleItems.map((item, index) => (
+              <MediaCard
+                key={item.id}
+                item={item}
+                index={index}
+                aspect={currentSubcategory.aspect}
+                onClick={() => (item.url || item.thumbnail) && setSelectedItem(item)}
+              />
+            ))}
+          </div>
+        )}
 
         {/* ── Ver más / Ver menos ── */}
         {hasMore && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-6 sm:mt-8 text-center"
-          >
+          <div className="mt-6 sm:mt-8 text-center animate-in fade-in duration-500">
             <button
               onClick={() => setShowAll(!showAll)}
               className="group relative inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 border border-white/[0.08] bg-white/[0.02] text-white/40 hover:text-white/70 hover:border-purple-500/30 hover:bg-purple-500/[0.05]"
@@ -491,22 +437,16 @@ export function GalleryAudiovisual() {
                 </>
               )}
             </button>
-          </motion.div>
+          </div>
         )}
 
         {/* ── CTA ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-10 sm:mt-14 text-center"
-        >
+        <div className="mt-10 sm:mt-14 text-center">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-2.5 px-6 sm:px-8 py-3 sm:py-3.5 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden"
+            className="group relative inline-flex items-center gap-2.5 px-6 sm:px-8 py-3 sm:py-3.5 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden hover:scale-105 transition-transform duration-300"
           >
             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/15 to-cyan-500/15 border border-purple-500/30 transition-all duration-300 group-hover:from-purple-500/25 group-hover:to-cyan-500/25 group-hover:border-purple-400/50" />
             <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-purple-400/50 rounded-tl-xl" />
@@ -517,67 +457,54 @@ export function GalleryAudiovisual() {
               Solicitar Producción
             </span>
           </a>
-        </motion.div>
+        </div>
 
         {/* ── Video Modal ── */}
-        <AnimatePresence>
-          {selectedItem && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm"
-              onClick={() => setSelectedItem(null)}
+        {selectedItem && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm transition-opacity"
+            onClick={() => setSelectedItem(null)}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-4xl rounded-xl sm:rounded-2xl border border-white/[0.08] bg-[#0c0d14]/95 backdrop-blur-xl overflow-hidden animate-in zoom-in-95 duration-200"
             >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-4xl rounded-xl sm:rounded-2xl border border-white/[0.08] bg-[#0c0d14]/95 backdrop-blur-xl overflow-hidden"
-              >
-                {/* Top glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 
-                {/* Header */}
-                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg border border-purple-500/20 bg-purple-500/[0.08] flex items-center justify-center">
-                      <Video className="h-4 w-4 text-purple-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm sm:text-base font-bold text-white font-mono">
-                        {selectedItem.title}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-white/30">{selectedItem.description}</p>
-                    </div>
+              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg border border-purple-500/20 bg-purple-500/[0.08] flex items-center justify-center">
+                    <Video className="h-4 w-4 text-purple-400" />
                   </div>
-                  <button
-                    onClick={() => setSelectedItem(null)}
-                    className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/20 transition-all"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-white font-mono">
+                      {selectedItem.title}
+                    </h3>
+                    <p className="text-[10px] sm:text-xs text-white/30">{selectedItem.description}</p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setSelectedItem(null)}
+                  className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/20 transition-all"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
-                {/* Video */}
-                <div className="p-4 sm:p-5">
-                  <video
-                    src={selectedItem.url}
-                    controls
-                    autoPlay
-                    className="w-full rounded-lg border border-white/[0.06]"
-                  />
-                </div>
+              <div className="p-4 sm:p-5">
+                <video
+                  src={selectedItem.url}
+                  controls
+                  autoPlay
+                  className="w-full rounded-lg border border-white/[0.06] shadow-2xl"
+                />
+              </div>
 
-                {/* Corner decorations */}
-                <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-purple-500/15 rounded-tr-2xl" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-purple-500/15 rounded-bl-2xl" />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-purple-500/15 rounded-tr-2xl" />
+              <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-purple-500/15 rounded-bl-2xl" />
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )

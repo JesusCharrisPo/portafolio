@@ -10,10 +10,11 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  Maximize2
+  Maximize2,
+  AlertCircle,
 } from "lucide-react"
 
-// ─── Data ─────────────────────────────────────────────────────────────
+// ─── Data (separada del componente para fácil mantenimiento) ──────────
 
 type MediaItem = {
   id: number | string
@@ -111,13 +112,66 @@ const WHATSAPP_NUMBER = "573019132001"
 const WHATSAPP_MESSAGE =
   "🤖 ¡Hola Jesus! 👋 Vi tu portafolio de *Imágenes y CGI con Inteligencia Artificial*. Me interesa crear una campaña visual para mi marca sin necesidad de un estudio físico. ¿Podemos hablar? 🚀"
 
-// ─── Spotlight Card (Masonry Ready & Ligera) ───────────────────────
+// ─── Image with lazy load + error state ──────────────────────────────
+
+function SmartImage({
+  src,
+  alt,
+  className,
+}: {
+  src: string
+  alt: string
+  className?: string
+}) {
+  const [hasError, setHasError] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  if (hasError) {
+    return (
+      <div className={`flex flex-col items-center justify-center gap-2 bg-white/[0.02] text-white/20 py-16 ${className}`}>
+        <AlertCircle className="h-6 w-6" />
+        <span className="text-[10px] font-mono tracking-widest uppercase">
+          Sin imagen
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative">
+      {/* Skeleton mientras carga */}
+      {!isLoaded && (
+        <div
+          className="absolute inset-0 bg-[#0a0b10]"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(34,211,238,0.05) 50%, transparent 100%)",
+            backgroundSize: "200% 100%",
+            animation: "shimmer 1.8s infinite",
+          }}
+        />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setHasError(true)}
+        className={`${className} transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+      />
+    </div>
+  )
+}
+
+// ─── Spotlight Card ───────────────────────────────────────────────────
 
 function SpotlightCard({
   item,
+  index,
   onClick,
 }: {
   item: MediaItem
+  index: number
   onClick: () => void
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
@@ -142,8 +196,14 @@ function SpotlightCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
       className="relative cursor-pointer group rounded-xl sm:rounded-2xl break-inside-avoid mb-4 sm:mb-6 transition-transform duration-300 hover:-translate-y-1"
+      style={{
+        animation: `fadeSlideUp 0.45s ease both`,
+        animationDelay: `${index * 80}ms`,
+        opacity: 0,
+        animationFillMode: "forwards",
+      }}
     >
-      {/* Spotlight border glow (Cyan/Purple) */}
+      {/* Spotlight border glow */}
       <div
         className="absolute -inset-px rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{
@@ -153,20 +213,20 @@ function SpotlightCard({
         }}
       />
 
-      {/* Glass card container */}
+      {/* Glass card */}
       <div className="relative h-full rounded-xl sm:rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl overflow-hidden">
-        
+
         {/* Inner spotlight */}
         {isHovered && (
           <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-10"
+            className="absolute inset-0 pointer-events-none z-10"
             style={{
               background: `radial-gradient(300px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(34,211,238,0.08), transparent 60%)`,
             }}
           />
         )}
 
-        {/* ── IA BADGE ── */}
+        {/* IA Badge */}
         <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-cyan-400/30 bg-black/60 backdrop-blur-md shadow-[0_0_10px_rgba(34,211,238,0.2)]">
           <Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
           <span className="text-[9px] sm:text-[10px] font-mono font-semibold text-cyan-300 tracking-wider">
@@ -174,38 +234,40 @@ function SpotlightCard({
           </span>
         </div>
 
-        {/* Image area (Dynamic Height) */}
+        {/* Image area */}
         <div className="relative overflow-hidden bg-black/40">
           {hasThumbnail ? (
-            <img
-              src={displayImage}
-              alt={item.title}
-              className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
+            <>
+              <SmartImage
+                src={displayImage}
+                alt={item.title}
+                className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Hover icon */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
+                <div className="p-3 sm:p-4 rounded-full border border-purple-400/40 bg-black/40 backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:scale-110 transition-transform">
+                  <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6 text-purple-300" />
+                </div>
+              </div>
+
+              {/* Image count badge */}
+              {imageCount > 1 && (
+                <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded border border-white/10 bg-black/50 backdrop-blur-sm">
+                  <span className="text-[10px] sm:text-xs font-mono text-white/70">
+                    {imageCount} variaciones
+                  </span>
+                </div>
+              )}
+            </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 gap-2 sm:gap-3 text-white/30">
+            <div className="flex flex-col items-center justify-center py-20 gap-2 text-white/30">
               <ImageIcon className="h-8 w-8 sm:h-12 sm:w-12" />
               <span className="text-[10px] sm:text-xs font-mono tracking-widest uppercase">
                 Próximamente
-              </span>
-            </div>
-          )}
-
-          {/* Hover gradient for readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Hover icon */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
-            <div className="p-3 sm:p-4 rounded-full border border-purple-400/40 bg-black/40 backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:scale-110 transition-transform">
-              <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6 text-purple-300" />
-            </div>
-          </div>
-
-          {/* Image count badge */}
-          {imageCount > 1 && (
-            <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded border border-white/10 bg-black/50 backdrop-blur-sm">
-              <span className="text-[10px] sm:text-xs font-mono text-white/70">
-                {imageCount} variaciones
               </span>
             </div>
           )}
@@ -225,7 +287,7 @@ function SpotlightCard({
   )
 }
 
-// ─── Image Slider Modal (Ligero) ───────────────────────────────────
+// ─── Image Slider Modal ───────────────────────────────────────────────
 
 function ImageSliderModal({
   item,
@@ -236,33 +298,22 @@ function ImageSliderModal({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const allImages =
-    item.images && item.images.length > 0
-      ? item.images
-      : [item.thumbnail || ""]
-
-  const hasMultiple = allImages.length > 1
+    item.images && item.images.length > 0 ? item.images : [item.thumbnail || ""]
   const validImages = allImages.filter((img) => img !== "")
+  const hasMultiple = validImages.length > 1
 
-  const goNext = () => {
-    if (validImages.length > 0) {
-      setCurrentIndex((prev) => (prev + 1) % validImages.length)
-    }
-  }
-
-  const goPrev = () => {
-    if (validImages.length > 0) {
-      setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length)
-    }
-  }
+  const goNext = () => setCurrentIndex((prev) => (prev + 1) % validImages.length)
+  const goPrev = () => setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-5xl rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-[#07080d] shadow-2xl overflow-hidden flex flex-col max-h-[95vh] animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-5xl rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-[#07080d] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]"
+        style={{ animation: "fadeSlideUp 0.2s ease both" }}
       >
         {/* Top glow line */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
@@ -288,14 +339,14 @@ function ImageSliderModal({
           </button>
         </div>
 
-        {/* Image Slider - DYNAMIC RATIO */}
+        {/* Image slider */}
         <div className="flex-1 relative bg-black/50 min-h-0 flex items-center justify-center p-2 sm:p-4">
           {validImages.length > 0 ? (
-            <img
+            <SmartImage
               key={currentIndex}
               src={validImages[currentIndex]}
               alt={`${item.title} - ${currentIndex + 1}`}
-              className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg shadow-2xl animate-in fade-in duration-300"
+              className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg shadow-2xl"
             />
           ) : (
             <div className="flex flex-col items-center justify-center gap-3 text-white/30">
@@ -304,27 +355,36 @@ function ImageSliderModal({
           )}
 
           {/* Navigation arrows */}
-          {hasMultiple && validImages.length > 1 && (
+          {hasMultiple && (
             <>
               <button
-                onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                onClick={(e) => { e.stopPropagation(); goPrev() }}
                 className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
               >
                 <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
               </button>
               <button
-                onClick={(e) => { e.stopPropagation(); goNext(); }}
+                onClick={(e) => { e.stopPropagation(); goNext() }}
                 className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
               >
                 <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
               </button>
             </>
           )}
+
+          {/* Counter */}
+          {hasMultiple && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm">
+              <span className="text-[10px] font-mono text-white/50 tracking-wider">
+                {currentIndex + 1} / {validImages.length}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Thumbnail strip */}
         {validImages.length > 1 && (
-          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-white/[0.06] bg-black/40 overflow-x-auto scrollbar-hide">
+          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-white/[0.06] bg-black/40 overflow-x-auto">
             {validImages.map((img, idx) => (
               <button
                 key={idx}
@@ -338,6 +398,7 @@ function ImageSliderModal({
                 <img
                   src={img}
                   alt={`Thumb ${idx + 1}`}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               </button>
@@ -349,36 +410,60 @@ function ImageSliderModal({
   )
 }
 
-// ─── Main Component (Ligero) ──────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────
 
-// 🔥 AQUÍ ESTÁ EL CAMBIO: Ya no usamos 'default', coincidirá con tu page.tsx
 export function GalleryCatalogoRopa() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeTab, setActiveTab] = useState("catalogo-producto")
+  const [isChangingTab, setIsChangingTab] = useState(false)
+  const [displayedTab, setDisplayedTab] = useState("catalogo-producto")
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-  const activeCategory = categories.find((c) => c.id === activeTab)
+  const activeCategory = categories.find((c) => c.id === displayedTab)
+
+  const handleTabChange = (id: string) => {
+    if (id === activeTab) return
+    setIsChangingTab(true)
+    setTimeout(() => {
+      setActiveTab(id)
+      setDisplayedTab(id)
+      setIsChangingTab(false)
+    }, 180)
+  }
 
   return (
-    <section id="galeria-ia" className="relative py-16 sm:py-24 bg-[#050508] overflow-hidden">
-      
-      {/* Background effects */}
+    <section id="catalogo-ropa" className="relative py-16 sm:py-24 bg-[#050508] overflow-hidden">
+
+      {/* Keyframes globales */}
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: -200% 0 }
+          100% { background-position: 200% 0 }
+        }
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(18px) }
+          to { opacity: 1; transform: translateY(0) }
+        }
+      `}</style>
+
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[400px] sm:w-[800px] h-[300px] sm:h-[500px] bg-cyan-600/[0.04] rounded-full blur-[100px] sm:blur-[140px]" />
         <div className="absolute bottom-0 right-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[500px] bg-purple-600/[0.05] rounded-full blur-[90px] sm:blur-[120px]" />
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
-        <div className="text-center mb-10 sm:mb-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="text-center mb-10 sm:mb-14" style={{ animation: "fadeSlideUp 0.7s ease both" }}>
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-purple-500/30 bg-purple-500/[0.08] mb-5 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
             <Sparkles className="h-3.5 w-3.5 text-purple-400 animate-pulse" />
             <span className="text-[10px] sm:text-xs font-mono text-purple-300 tracking-widest uppercase font-semibold">
@@ -400,38 +485,61 @@ export function GalleryCatalogoRopa() {
 
         {/* Tabs */}
         <div className="flex justify-center mb-8 sm:mb-12">
-          <div className="inline-flex gap-1 p-1.5 rounded-xl border border-white/[0.06] bg-[#0c0d14]/60 backdrop-blur-md w-full sm:w-auto overflow-x-auto scrollbar-hide">
+          <div className="inline-flex gap-1 p-1.5 rounded-xl border border-white/[0.06] bg-[#0c0d14]/60 backdrop-blur-md w-full sm:w-auto overflow-x-auto">
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setActiveTab(cat.id)}
+                onClick={() => handleTabChange(cat.id)}
                 className={`relative flex-shrink-0 flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-[10px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-300 ${
                   activeTab === cat.id
                     ? "text-cyan-300 bg-cyan-500/[0.12] border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
                     : "text-white/40 hover:text-white/70 border border-transparent"
                 }`}
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  {cat.icon}
-                  <span>{cat.name}</span>
-                </span>
+                {cat.icon}
+                <span>{cat.name}</span>
+                {/* Punto activo */}
+                {activeTab === cat.id && (
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-cyan-400 inline-block"
+                    style={{ animation: "shimmer 1.5s ease-in-out infinite" }}
+                  />
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Masonry Grid */}
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6 animate-in fade-in duration-500">
-          {activeCategory?.items.map((item, index) => (
-            <SpotlightCard
-              key={`${activeTab}-${item.id}`}
-              item={item}
-              onClick={() => setSelectedItem(item)}
-            />
-          ))}
+        {/* Descripción de categoría activa */}
+        {activeCategory && (
+          <p
+            className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-8 sm:mb-10"
+            style={{ animation: "fadeSlideUp 0.3s ease both" }}
+          >
+            {activeCategory.description}
+          </p>
+        )}
+
+        {/* Masonry Grid con fade transition entre tabs */}
+        <div
+          style={{
+            opacity: isChangingTab ? 0 : 1,
+            transition: "opacity 0.18s ease",
+          }}
+        >
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6">
+            {activeCategory?.items.map((item, index) => (
+              <SpotlightCard
+                key={`${displayedTab}-${item.id}`}
+                item={item}
+                index={index}
+                onClick={() => setSelectedItem(item)}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* CTA WhatsApp */}
+        {/* CTA */}
         <div className="mt-12 sm:mt-16 text-center">
           <a
             href={whatsappUrl}
@@ -440,7 +548,6 @@ export function GalleryCatalogoRopa() {
             className="group relative inline-flex items-center gap-3 px-8 py-4 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden rounded-xl hover:scale-105 transition-transform duration-300"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 backdrop-blur-sm transition-all duration-500 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 group-hover:border-cyan-300/60 shadow-[0_0_20px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]" />
-            
             <Sparkles className="relative z-10 h-5 w-5 text-cyan-400 group-hover:text-cyan-300 animate-pulse" />
             <span className="relative z-10 text-white font-semibold group-hover:text-cyan-100 transition-colors">
               Crear mi campaña IA

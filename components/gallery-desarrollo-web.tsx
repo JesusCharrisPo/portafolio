@@ -130,7 +130,7 @@ const categories: Category[] = [
   },
 ]
 
-const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE =
   "🚀 ¡Hola Jesus! 👋 Estoy interesado en tus servicios de *Desarrollo Web* 💻 Me gustaría saber más sobre cómo puedes ayudarme con mi proyecto. ¿Podemos agendar una llamada? 📞✨"
 

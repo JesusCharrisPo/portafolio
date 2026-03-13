@@ -115,7 +115,7 @@ const categories: MainCategory[] = [
   },
 ]
 
-const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE =
   "🎬 ¡Hola Jesus! 👋 Me interesa tu servicio de *Producción Audiovisual* 🎥✨ Quiero crear contenido profesional para mi marca. ¿Podemos hablar sobre mi proyecto? 🚀📞"
 

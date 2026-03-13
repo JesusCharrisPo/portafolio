@@ -136,7 +136,7 @@ const categories: Category[] = [
   },
 ]
 
-const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE = "🤖 ¡Hola Jesus! 👋 Vi tu portafolio de *Imágenes y CGI con Inteligencia Artificial*. Me interesa crear una campaña visual para mi marca sin necesidad de un estudio físico. ¿Podemos hablar? 🚀"
 
 function ScanlineOverlay() {

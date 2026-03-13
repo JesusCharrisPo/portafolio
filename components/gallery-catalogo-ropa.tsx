@@ -47,13 +47,13 @@ const categories: Category[] = [
         title: "MBloom Body Butters",
         description: "Visualización cosmética generada con IA para marca de skincare.",
         type: "image",
-        thumbnail: "/mbloom1.jpg",
+        thumbnail: "/mbloom-ia-1.jpg",
         images: [
-          "/mbloom1.jpg",
-          "/mbloom2.jpg",
-          "/mbloom3.jpg",
-          "/mbloom4.jpg",
-          "/mbloom5.jpg",
+          "/mbloom-ia-1.jpg",
+          "/mbloom-ia-2.jpg",
+          "/mbloom-ia-3.jpg",
+          "/mbloom-ia-4.jpg",
+          "/mbloom-ia-5.jpg",
         ],
       },
       {
@@ -93,7 +93,7 @@ const categories: Category[] = [
         title: "Tuxxy Trap Artist",
         description: "Concepto visual urbano para artista trap generado con IA.",
         type: "image",
-        thumbnail: "/tuxxy-1.jpg",
+        thumbnail: "/tuxxy-2.jpg",
         images: [
           "/tuxxy-1.jpg",
           "/tuxxy-2.jpg",

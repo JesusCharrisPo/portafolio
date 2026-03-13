@@ -14,7 +14,7 @@ const valuePoints = [
   { icon: Video, text: "Producción Audiovisual Profesional" },
 ]
 
-const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE =
   "🚀 ¡Hola Jesus! 👋 Vi tu portafolio y me interesa una *consulta gratuita* para mi proyecto 💡 ¿Podemos agendar una llamada? 📞✨"
 

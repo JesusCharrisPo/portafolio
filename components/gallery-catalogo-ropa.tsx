@@ -42,22 +42,88 @@ const categories: Category[] = [
     icon: <Layers className="h-4 w-4" />,
     description: "Visualización de producto generada 100% con IA (CGI Generativo)",
     items: [
-      { id: "ia-mbloom",  title: "MBloom Body Butters", description: "Set virtual botánico con simulación de luz natural.",       type: "image", thumbnail: "/mbloom-ia-1.jpg",       images: ["/mbloom-ia-1.jpg", "/mbloom-ia-2.jpg"] },
-      { id: "ia-petcare", title: "Pet Care Brush",      description: "Simulación de fluidos y partículas generativas.",          type: "image", thumbnail: "/petcare-ia.jpg",          images: ["/petcare-ia.jpg"] },
-      { id: "ia-shoes",   title: "Sneakers Focus",      description: "Zapatos urbanos integrados en entornos sintéticos.",       type: "image", thumbnail: "/sneaker-ia.jpg",          images: ["/sneaker-ia.jpg", "/sneaker-ia-2.jpg"] },
+
+      {
+        id: "ia-mbloom",
+        title: "MBloom Body Butters",
+        description: "Visualización cosmética generada con IA para marca de skincare.",
+        type: "image",
+        thumbnail: "/mbloom1.jpg",
+        images: [
+          "/mbloom1.jpg",
+          "/mbloom2.jpg",
+          "/mbloom3.jpg",
+          "/mbloom4.jpg",
+          "/mbloom5.jpg"
+        ]
+      },
+
+      {
+        id: "ia-laurent-handbag",
+        title: "Laurent Luxury Handbag",
+        description: "Bolso de lujo generado con IA para visualización de ecommerce.",
+        type: "image",
+        thumbnail: "/laurent-bag-1.jpg",
+        images: [
+          "/laurent-bag-1.jpg",
+          "/laurent-bag-2.jpg",
+          "/laurent-bag-3.jpg",
+          "/laurent-bag-4.jpg"
+        ]
+      },
+
+      {
+        id: "ia-laurent-tote",
+        title: "Laurent Perforated Tote",
+        description: "Bolso tote generado con IA para catálogo de producto.",
+        type: "image",
+        thumbnail: "/laurent-red-tote.jpg",
+        images: [
+          "/laurent-red-tote.jpg"
+        ]
+      }
+
     ],
   },
+
   {
     id: "modelos-ia",
     name: "Modelos IA",
     shortCode: "MDL",
     icon: <Sparkles className="h-4 w-4" />,
-    description: "Avatares hiperrealistas y fashion films sintéticos",
+    description: "Avatares hiperrealistas y campañas generadas con IA",
     items: [
-      { id: "ia-avatar-1",       title: "Campaña Cosmética",       description: "Modelaje hiperrealista con texturas de piel fotorrealistas.", type: "image", thumbnail: "/modelo-ia-1.jpg",       images: ["/modelo-ia-1.jpg", "/modelo-ia-2.jpg"] },
-      { id: "ia-macone-virtual", title: "Mac One | Virtual Try-On", description: "Prendas reales aplicadas sobre modelos generados por IA.",   type: "image", thumbnail: "/macone-ia-modelo.jpg", images: ["/macone-ia-modelo.jpg"] },
+
+      {
+        id: "ia-tuxxy",
+        title: "Tuxxy Trap Artist",
+        description: "Concepto visual urbano para artista trap generado con IA.",
+        type: "image",
+        thumbnail: "/tuxxy-1.jpg",
+        images: [
+          "/tuxxy-1.jpg",
+          "/tuxxy-2.jpg",
+          "/tuxxy-3.jpg",
+          "/tuxxy-4.jpg",
+          "/tuxxy-5.jpg"
+        ]
+      },
+
+      {
+        id: "ia-mbloom-model",
+        title: "MBloom Beauty Campaign",
+        description: "Campaña beauty con modelo hiperrealista generada con IA.",
+        type: "image",
+        thumbnail: "/mbloom-model-1.jpg",
+        images: [
+          "/mbloom-model-1.jpg",
+          "/mbloom-model-2.jpg"
+        ]
+      }
+
     ],
   },
+
   {
     id: "editorial",
     name: "Editorial AI",
@@ -65,7 +131,16 @@ const categories: Category[] = [
     icon: <Camera className="h-4 w-4" />,
     description: "Dirección de arte, iluminación cinematográfica y conceptos visuales",
     items: [
-      { id: "ia-neon-concept", title: "Concepto Neón & Humo", description: "Iluminación dual retro-futurista generada por IA.", type: "image", thumbnail: "/neon-ia-1.jpg", images: ["/neon-ia-1.jpg", "/neon-ia-2.jpg"] },
+      {
+        id: "ia-editorial-1",
+        title: "Editorial Concept",
+        description: "Fotografía conceptual generada con IA con iluminación cinematográfica.",
+        type: "image",
+        thumbnail: "/tuxxy-3.jpg",
+        images: [
+          "/tuxxy-3.jpg"
+        ]
+      }
     ],
   },
 ]

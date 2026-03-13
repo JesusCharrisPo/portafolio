@@ -134,7 +134,7 @@ const categories: Category[] = [
       {
         id: "ia-editorial-1",
         title: "Editorial Concept",
-        description: "Fotografía conceptual generada con IA, con iluminación cinematográfica.",
+        description: "Fotografía conceptual generada con IA con iluminación cinematográfica.",
         type: "image",
         thumbnail: "/tuxxy-3.jpg",
         images: [

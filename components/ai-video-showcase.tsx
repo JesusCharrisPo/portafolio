@@ -18,7 +18,7 @@ import {
 // 🔧 CAMBIA ESTA URL por la de tu video IA
 const VIDEO_URL = "/PARDELOCOS.mp4"
 
-const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE =
   "🤖 ¡Hola Jesus! 👋 Vi tu demo de *IA Aplicada a Producción Audiovisual* y quiero algo así para mi marca. ¿Podemos hablar? 🚀"
 

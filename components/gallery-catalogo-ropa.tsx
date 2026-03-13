@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useRef, MouseEvent } from "react"
+import { useState, useRef, useEffect, MouseEvent } from "react"
 import {
   ImageIcon,
-  MessageCircle,
   Sparkles,
   Camera,
   Layers,
@@ -12,9 +11,11 @@ import {
   X,
   Maximize2,
   AlertCircle,
+  Zap,
+  Activity,
 } from "lucide-react"
 
-// ─── Data (separada del componente para fácil mantenimiento) ──────────
+// ─── Types ────────────────────────────────────────────────────────────
 
 type MediaItem = {
   id: number | string
@@ -33,11 +34,13 @@ type Category = {
   items: MediaItem[]
 }
 
+// ─── Data ─────────────────────────────────────────────────────────────
+
 const categories: Category[] = [
   {
     id: "catalogo-producto",
     name: "Catálogo Producto",
-    icon: <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    icon: <Layers className="h-3.5 w-3.5" />,
     description: "Visualización de producto generada 100% con IA (CGI Generativo)",
     items: [
       {
@@ -69,7 +72,7 @@ const categories: Category[] = [
   {
     id: "modelos-ia",
     name: "Modelos IA",
-    icon: <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    icon: <Sparkles className="h-3.5 w-3.5" />,
     description: "Avatares hiperrealistas y fashion films sintéticos",
     items: [
       {
@@ -93,7 +96,7 @@ const categories: Category[] = [
   {
     id: "editorial",
     name: "Editorial AI",
-    icon: <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4" />,
+    icon: <Camera className="h-3.5 w-3.5" />,
     description: "Dirección de arte, iluminación cinematográfica y conceptos visuales",
     items: [
       {
@@ -112,44 +115,116 @@ const WHATSAPP_NUMBER = "573019132001"
 const WHATSAPP_MESSAGE =
   "🤖 ¡Hola Jesus! 👋 Vi tu portafolio de *Imágenes y CGI con Inteligencia Artificial*. Me interesa crear una campaña visual para mi marca sin necesidad de un estudio físico. ¿Podemos hablar? 🚀"
 
-// ─── Image with lazy load + error state ──────────────────────────────
+// ─── Utility: Glitch Text ─────────────────────────────────────────────
 
-function SmartImage({
-  src,
-  alt,
-  className,
-}: {
-  src: string
-  alt: string
-  className?: string
-}) {
+function GlitchText({ text, className }: { text: string; className?: string }) {
+  return (
+    <span className={`relative inline-block ${className}`} data-text={text}>
+      {text}
+      <span
+        aria-hidden
+        className="absolute inset-0 text-cyan-400 opacity-0 hover:opacity-60 transition-opacity duration-75"
+        style={{ clipPath: "polygon(0 20%, 100% 20%, 100% 40%, 0 40%)", transform: "translateX(-2px)" }}
+      >
+        {text}
+      </span>
+      <span
+        aria-hidden
+        className="absolute inset-0 text-fuchsia-500 opacity-0 hover:opacity-40 transition-opacity duration-75"
+        style={{ clipPath: "polygon(0 60%, 100% 60%, 100% 80%, 0 80%)", transform: "translateX(2px)" }}
+      >
+        {text}
+      </span>
+    </span>
+  )
+}
+
+// ─── Live Data Ticker ─────────────────────────────────────────────────
+
+function DataTicker() {
+  const data = [
+    "SYS::NEURAL_RENDER_v4.2",
+    "NODES: 1,284 ACTIVE",
+    "LATENCY: 12ms",
+    "GPU_CLUSTER: 98.3%",
+    "DIFFUSION_STEPS: 50",
+    "RESOLUTION: 4K_UPSCALE",
+    "MODELS_LOADED: 7",
+    "QUEUE: 0 PENDING",
+  ]
+  return (
+    <div className="overflow-hidden border-y border-[#00ffe1]/10 bg-black/40 backdrop-blur-sm py-1.5 mb-10">
+      <div className="flex gap-8 animate-[ticker_18s_linear_infinite] whitespace-nowrap">
+        {[...data, ...data].map((item, i) => (
+          <span key={i} className="text-[9px] font-mono text-[#00ffe1]/40 tracking-[0.2em] uppercase flex items-center gap-2">
+            <span className="w-1 h-1 rounded-full bg-[#00ffe1]/60 inline-block" />
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Scanline Overlay ─────────────────────────────────────────────────
+
+function ScanlineOverlay() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 z-50 opacity-[0.03]"
+      style={{
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,225,0.15) 2px, rgba(0,255,225,0.15) 4px)",
+        backgroundSize: "100% 4px",
+      }}
+    />
+  )
+}
+
+// ─── Corner Brackets ─────────────────────────────────────────────────
+
+function CornerBrackets({ color = "#00ffe1", size = 14 }: { color?: string; size?: number }) {
+  return (
+    <>
+      {/* TL */}
+      <span className="absolute top-0 left-0 pointer-events-none" style={{ borderTop: `2px solid ${color}`, borderLeft: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+      {/* TR */}
+      <span className="absolute top-0 right-0 pointer-events-none" style={{ borderTop: `2px solid ${color}`, borderRight: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+      {/* BL */}
+      <span className="absolute bottom-0 left-0 pointer-events-none" style={{ borderBottom: `2px solid ${color}`, borderLeft: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+      {/* BR */}
+      <span className="absolute bottom-0 right-0 pointer-events-none" style={{ borderBottom: `2px solid ${color}`, borderRight: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+    </>
+  )
+}
+
+// ─── Smart Image ──────────────────────────────────────────────────────
+
+function SmartImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   const [hasError, setHasError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
   if (hasError) {
     return (
-      <div className={`flex flex-col items-center justify-center gap-2 bg-white/[0.02] text-white/20 py-16 ${className}`}>
+      <div className={`flex flex-col items-center justify-center gap-2 bg-[#050810] text-[#00ffe1]/20 py-20 ${className}`}>
         <AlertCircle className="h-6 w-6" />
-        <span className="text-[10px] font-mono tracking-widest uppercase">
-          Sin imagen
-        </span>
+        <span className="text-[9px] font-mono tracking-[0.3em] uppercase">SIN_SEÑAL</span>
       </div>
     )
   }
 
   return (
-    <div className="relative">
-      {/* Skeleton mientras carga */}
+    <div className="relative overflow-hidden">
       {!isLoaded && (
-        <div
-          className="absolute inset-0 bg-[#0a0b10]"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent 0%, rgba(34,211,238,0.05) 50%, transparent 100%)",
-            backgroundSize: "200% 100%",
-            animation: "shimmer 1.8s infinite",
-          }}
-        />
+        <div className="absolute inset-0 bg-[#050810]">
+          <div
+            className="h-full w-full"
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, rgba(0,255,225,0.04) 50%, transparent 100%)",
+              backgroundSize: "200% 100%",
+              animation: "shimmer 2s infinite linear",
+            }}
+          />
+        </div>
       )}
       <img
         src={src}
@@ -157,85 +232,97 @@ function SmartImage({
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
         onError={() => setHasError(true)}
-        className={`${className} transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+        className={`${className} transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
       />
     </div>
   )
 }
 
-// ─── Spotlight Card ───────────────────────────────────────────────────
+// ─── Holographic Card ─────────────────────────────────────────────────
 
-function SpotlightCard({
-  item,
-  index,
-  onClick,
-}: {
-  item: MediaItem
-  index: number
-  onClick: () => void
-}) {
+function HoloCard({ item, index, onClick }: { item: MediaItem; index: number; onClick: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const [spotlightPos, setSpotlightPos] = useState({ x: 0, y: 0 })
+  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+  const [glow, setGlow] = useState({ x: 50, y: 50 })
   const [isHovered, setIsHovered] = useState(false)
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
-    setSpotlightPos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+    const cx = (e.clientX - rect.left) / rect.width
+    const cy = (e.clientY - rect.top) / rect.height
+    setTilt({ x: (cy - 0.5) * -10, y: (cx - 0.5) * 10 })
+    setGlow({ x: cx * 100, y: cy * 100 })
   }
 
-  const hasThumbnail = item.thumbnail || (item.images && item.images.length > 0)
-  const displayImage = item.thumbnail || (item.images && item.images[0]) || ""
-  const imageCount = item.images ? item.images.length : 0
+  const resetTilt = () => {
+    setTilt({ x: 0, y: 0 })
+    setIsHovered(false)
+  }
+
+  const hasThumbnail = !!item.thumbnail || item.images.length > 0
+  const displayImage = item.thumbnail || item.images[0] || ""
+  const imageCount = item.images.length
 
   return (
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={resetTilt}
       onClick={onClick}
-      className="relative cursor-pointer group rounded-xl sm:rounded-2xl break-inside-avoid mb-4 sm:mb-6 transition-transform duration-300 hover:-translate-y-1"
+      className="relative cursor-pointer break-inside-avoid mb-5 sm:mb-6"
       style={{
-        animation: `fadeSlideUp 0.45s ease both`,
-        animationDelay: `${index * 80}ms`,
-        opacity: 0,
-        animationFillMode: "forwards",
+        animation: `revealUp 0.5s cubic-bezier(0.16,1,0.3,1) both`,
+        animationDelay: `${index * 90}ms`,
+        perspective: "1000px",
       }}
     >
-      {/* Spotlight border glow */}
+      {/* Outer glow ring on hover */}
       <div
-        className="absolute -inset-px rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        className="absolute -inset-[1px] rounded-lg transition-opacity duration-300 pointer-events-none"
         style={{
-          background: isHovered
-            ? `radial-gradient(350px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.4), transparent 60%)`
-            : "none",
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(ellipse at ${glow.x}% ${glow.y}%, rgba(0,255,225,0.35) 0%, rgba(180,0,255,0.15) 50%, transparent 70%)`,
         }}
       />
 
-      {/* Glass card */}
-      <div className="relative h-full rounded-xl sm:rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+      {/* Card body */}
+      <div
+        className="relative rounded-lg border border-[#00ffe1]/10 bg-[#060a12] overflow-hidden transition-all duration-150"
+        style={{
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(0)`,
+          transformStyle: "preserve-3d",
+          boxShadow: isHovered
+            ? "0 0 30px rgba(0,255,225,0.06), inset 0 0 40px rgba(0,0,0,0.5)"
+            : "0 2px 20px rgba(0,0,0,0.6)",
+        }}
+      >
+        {/* Scanlines on card */}
+        <ScanlineOverlay />
 
-        {/* Inner spotlight */}
-        {isHovered && (
-          <div
-            className="absolute inset-0 pointer-events-none z-10"
-            style={{
-              background: `radial-gradient(300px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(34,211,238,0.08), transparent 60%)`,
-            }}
-          />
-        )}
+        {/* Corner brackets */}
+        <CornerBrackets color="#00ffe1" size={10} />
 
-        {/* IA Badge */}
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-cyan-400/30 bg-black/60 backdrop-blur-md shadow-[0_0_10px_rgba(34,211,238,0.2)]">
-          <Sparkles className="h-3 w-3 text-cyan-400 animate-pulse" />
-          <span className="text-[9px] sm:text-[10px] font-mono font-semibold text-cyan-300 tracking-wider">
-            100% IA
-          </span>
+        {/* HUD badge */}
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded border border-[#00ffe1]/20 bg-black/70 backdrop-blur-md">
+          <Activity className="h-2.5 w-2.5 text-[#00ffe1] animate-pulse" />
+          <span className="text-[8px] font-mono font-bold text-[#00ffe1] tracking-[0.25em]">GEN·IA</span>
+        </div>
+
+        {/* Signal strength dots */}
+        <div className="absolute top-3 right-3 z-20 flex gap-0.5 items-end">
+          {[1, 2, 3, 4].map((bar) => (
+            <span
+              key={bar}
+              className="w-1 rounded-sm bg-[#b400ff]"
+              style={{ height: `${bar * 4}px`, opacity: 0.7 + bar * 0.05 }}
+            />
+          ))}
         </div>
 
         {/* Image area */}
-        <div className="relative overflow-hidden bg-black/40">
+        <div className="relative overflow-hidden">
           {hasThumbnail ? (
             <>
               <SmartImage
@@ -244,169 +331,245 @@ function SpotlightCard({
                 className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Holographic shimmer on image hover */}
+              {isHovered && (
+                <div
+                  className="absolute inset-0 pointer-events-none mix-blend-screen"
+                  style={{
+                    background: `radial-gradient(ellipse at ${glow.x}% ${glow.y}%, rgba(0,255,225,0.12) 0%, rgba(180,0,255,0.08) 40%, transparent 70%)`,
+                  }}
+                />
+              )}
 
-              {/* Hover icon */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
-                <div className="p-3 sm:p-4 rounded-full border border-purple-400/40 bg-black/40 backdrop-blur-sm shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:scale-110 transition-transform">
-                  <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6 text-purple-300" />
+              {/* Hover overlay with grid */}
+              <div
+                className="absolute inset-0 transition-opacity duration-400 pointer-events-none"
+                style={{
+                  opacity: isHovered ? 1 : 0,
+                  background: "linear-gradient(to top, rgba(0,8,16,0.95) 0%, rgba(0,8,16,0.4) 40%, transparent 100%)",
+                }}
+              />
+
+              {/* Expand icon */}
+              <div
+                className="absolute inset-0 flex items-center justify-center transition-all duration-300 z-10"
+                style={{ opacity: isHovered ? 1 : 0 }}
+              >
+                <div
+                  className="p-3 rounded-lg border border-[#00ffe1]/40 bg-black/60 backdrop-blur-md"
+                  style={{ boxShadow: "0 0 20px rgba(0,255,225,0.3), inset 0 0 10px rgba(0,255,225,0.05)" }}
+                >
+                  <Maximize2 className="h-5 w-5 text-[#00ffe1]" />
                 </div>
               </div>
 
-              {/* Image count badge */}
               {imageCount > 1 && (
-                <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded border border-white/10 bg-black/50 backdrop-blur-sm">
-                  <span className="text-[10px] sm:text-xs font-mono text-white/70">
-                    {imageCount} variaciones
-                  </span>
+                <div className="absolute bottom-3 right-3 z-20 px-2 py-0.5 rounded border border-[#b400ff]/30 bg-black/60 backdrop-blur-sm">
+                  <span className="text-[9px] font-mono text-[#b400ff]/90 tracking-widest">{imageCount}×VAR</span>
                 </div>
               )}
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 gap-2 text-white/30">
-              <ImageIcon className="h-8 w-8 sm:h-12 sm:w-12" />
-              <span className="text-[10px] sm:text-xs font-mono tracking-widest uppercase">
-                Próximamente
-              </span>
+            <div className="flex flex-col items-center justify-center py-20 gap-2 text-[#00ffe1]/20">
+              <ImageIcon className="h-10 w-10" />
+              <span className="text-[9px] font-mono tracking-[0.3em] uppercase">OFFLINE</span>
             </div>
           )}
         </div>
 
-        {/* Content */}
-        <div className="p-4 sm:p-5 space-y-1.5 relative z-20 bg-gradient-to-b from-transparent to-[#07080d]/80">
-          <h3 className="font-bold text-white/95 font-mono tracking-wide text-xs sm:text-sm">
+        {/* Card content */}
+        <div className="px-4 py-3 relative z-10">
+          {/* Data label row */}
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[8px] font-mono text-[#00ffe1]/30 tracking-[0.2em] uppercase">
+              ID::{String(item.id).toUpperCase().slice(0, 8)}
+            </span>
+            <span className="text-[8px] font-mono text-[#b400ff]/50 tracking-widest">●●●</span>
+          </div>
+          <h3 className="font-bold text-white/90 font-mono tracking-wider text-[11px] sm:text-xs mb-1">
             {item.title}
           </h3>
-          <p className="text-[11px] sm:text-xs text-white/50 leading-relaxed">
+          <p className="text-[10px] sm:text-[11px] text-white/35 leading-relaxed font-mono">
             {item.description}
           </p>
+          {/* Bottom scanline bar */}
+          <div className="mt-3 h-px w-full bg-gradient-to-r from-transparent via-[#00ffe1]/20 to-transparent" />
         </div>
       </div>
     </div>
   )
 }
 
-// ─── Image Slider Modal ───────────────────────────────────────────────
+// ─── Modal ────────────────────────────────────────────────────────────
 
-function ImageSliderModal({
-  item,
-  onClose,
-}: {
-  item: MediaItem
-  onClose: () => void
-}) {
+function HoloModal({ item, onClose }: { item: MediaItem; onClose: () => void }) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const allImages =
-    item.images && item.images.length > 0 ? item.images : [item.thumbnail || ""]
-  const validImages = allImages.filter((img) => img !== "")
+  const allImages = item.images.length > 0 ? item.images : [item.thumbnail || ""]
+  const validImages = allImages.filter(Boolean)
   const hasMultiple = validImages.length > 1
 
-  const goNext = () => setCurrentIndex((prev) => (prev + 1) % validImages.length)
-  const goPrev = () => setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length)
+  // Keyboard navigation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") setCurrentIndex((p) => (p + 1) % validImages.length)
+      if (e.key === "ArrowLeft") setCurrentIndex((p) => (p - 1 + validImages.length) % validImages.length)
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [validImages.length, onClose])
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
+      style={{ background: "rgba(0,4,10,0.96)", backdropFilter: "blur(16px)" }}
       onClick={onClose}
     >
+      {/* Grid bg */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        style={{
+          backgroundImage: "linear-gradient(rgba(0,255,225,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,225,0.4) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-5xl rounded-xl sm:rounded-2xl border border-cyan-500/20 bg-[#07080d] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]"
-        style={{ animation: "fadeSlideUp 0.2s ease both" }}
+        className="relative w-full max-w-5xl rounded-lg border border-[#00ffe1]/15 bg-[#04080f] overflow-hidden flex flex-col max-h-[93vh]"
+        style={{ animation: "revealUp 0.22s cubic-bezier(0.16,1,0.3,1) both", boxShadow: "0 0 60px rgba(0,255,225,0.06), 0 0 120px rgba(180,0,255,0.04)" }}
       >
+        <ScanlineOverlay />
+        <CornerBrackets color="#00ffe1" size={18} />
+
         {/* Top glow line */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#00ffe1]/60 to-transparent" style={{ boxShadow: "0 0 12px rgba(0,255,225,0.6)" }} />
 
         {/* Header */}
-        <div className="flex-none flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
-              <span className="text-[10px] font-mono text-purple-400 tracking-widest uppercase">
-                Generación IA
-              </span>
+        <div className="flex-none flex items-center justify-between px-5 py-4 border-b border-[#00ffe1]/08">
+          <div className="flex items-center gap-4">
+            {/* Status indicator */}
+            <div className="flex items-center gap-2 px-3 py-1 rounded border border-[#00ffe1]/20 bg-[#00ffe1]/05">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00ffe1] animate-pulse" style={{ boxShadow: "0 0 6px rgba(0,255,225,0.8)" }} />
+              <span className="text-[9px] font-mono text-[#00ffe1] tracking-[0.25em]">TRANSMITTING</span>
             </div>
-            <h3 className="text-sm sm:text-base font-mono font-bold text-white tracking-wide">
-              {item.title}
-            </h3>
+            <div>
+              <p className="text-[9px] font-mono text-[#b400ff]/60 tracking-widest mb-0.5 uppercase">
+                Neural Render // {String(item.id).toUpperCase()}
+              </p>
+              <h3 className="text-sm sm:text-base font-mono font-bold text-white tracking-wider">
+                {item.title}
+              </h3>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:text-white text-white/50 transition-colors"
+            className="p-2 rounded border border-white/08 bg-white/03 hover:border-[#00ffe1]/30 hover:text-[#00ffe1] text-white/40 transition-all duration-200 font-mono text-[10px] tracking-widest flex items-center gap-1.5"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
+            <span className="hidden sm:inline">ESC</span>
           </button>
         </div>
 
-        {/* Image slider */}
-        <div className="flex-1 relative bg-black/50 min-h-0 flex items-center justify-center p-2 sm:p-4">
+        {/* Image area */}
+        <div className="flex-1 relative min-h-0 flex items-center justify-center p-4 sm:p-6 bg-black/60">
           {validImages.length > 0 ? (
             <SmartImage
               key={currentIndex}
               src={validImages[currentIndex]}
-              alt={`${item.title} - ${currentIndex + 1}`}
-              className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg shadow-2xl"
+              alt={`${item.title} — ${currentIndex + 1}`}
+              className="max-w-full max-h-[58vh] sm:max-h-[66vh] object-contain rounded"
             />
           ) : (
-            <div className="flex flex-col items-center justify-center gap-3 text-white/30">
-              <ImageIcon className="h-12 w-12" />
+            <div className="flex flex-col items-center gap-3 text-[#00ffe1]/20">
+              <ImageIcon className="h-14 w-14" />
+              <span className="font-mono text-xs tracking-widest">NO_SIGNAL</span>
             </div>
           )}
 
-          {/* Navigation arrows */}
+          {/* Nav arrows */}
           {hasMultiple && (
             <>
               <button
-                onClick={(e) => { e.stopPropagation(); goPrev() }}
-                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
+                onClick={(e) => { e.stopPropagation(); setCurrentIndex((p) => (p - 1 + validImages.length) % validImages.length) }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded border border-[#00ffe1]/15 bg-black/70 backdrop-blur-md flex items-center justify-center hover:border-[#00ffe1]/50 hover:text-[#00ffe1] text-white/40 transition-all"
               >
-                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
+                <ChevronLeft className="h-5 w-5" />
               </button>
               <button
-                onClick={(e) => { e.stopPropagation(); goNext() }}
-                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 bg-black/60 backdrop-blur-md flex items-center justify-center hover:bg-black/80 hover:border-cyan-400/40 transition-all group"
+                onClick={(e) => { e.stopPropagation(); setCurrentIndex((p) => (p + 1) % validImages.length) }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded border border-[#00ffe1]/15 bg-black/70 backdrop-blur-md flex items-center justify-center hover:border-[#00ffe1]/50 hover:text-[#00ffe1] text-white/40 transition-all"
               >
-                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-white/70 group-hover:text-cyan-300 transition-colors" />
+                <ChevronRight className="h-5 w-5" />
               </button>
             </>
           )}
 
           {/* Counter */}
           {hasMultiple && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm">
-              <span className="text-[10px] font-mono text-white/50 tracking-wider">
-                {currentIndex + 1} / {validImages.length}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded border border-white/08 bg-black/70 backdrop-blur-sm">
+              <span className="text-[9px] font-mono text-[#00ffe1]/60 tracking-[0.2em]">
+                FRAME {String(currentIndex + 1).padStart(2, "0")} / {String(validImages.length).padStart(2, "0")}
               </span>
             </div>
           )}
         </div>
 
-        {/* Thumbnail strip */}
+        {/* Thumbnails */}
         {validImages.length > 1 && (
-          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-white/[0.06] bg-black/40 overflow-x-auto">
+          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-[#00ffe1]/08 bg-black/40 overflow-x-auto">
             {validImages.map((img, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`relative flex-shrink-0 h-12 w-12 sm:h-16 sm:w-16 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                  idx === currentIndex
-                    ? "border-cyan-400 ring-2 ring-cyan-500/30 opacity-100"
-                    : "border-transparent opacity-40 hover:opacity-80"
-                }`}
+                className="relative flex-shrink-0 h-12 w-12 sm:h-14 sm:w-14 rounded overflow-hidden border transition-all duration-300"
+                style={{
+                  borderColor: idx === currentIndex ? "rgba(0,255,225,0.6)" : "rgba(255,255,255,0.06)",
+                  opacity: idx === currentIndex ? 1 : 0.35,
+                  boxShadow: idx === currentIndex ? "0 0 10px rgba(0,255,225,0.3)" : "none",
+                }}
               >
-                <img
-                  src={img}
-                  alt={`Thumb ${idx + 1}`}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
+                <img src={img} alt={`Thumb ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                {idx === currentIndex && (
+                  <div className="absolute bottom-0 inset-x-0 h-0.5 bg-[#00ffe1]" style={{ boxShadow: "0 0 6px rgba(0,255,225,0.8)" }} />
+                )}
               </button>
             ))}
           </div>
         )}
+
+        {/* Bottom data bar */}
+        <div className="flex-none flex items-center justify-between px-4 py-2 border-t border-white/04 bg-black/60">
+          <span className="text-[8px] font-mono text-white/15 tracking-[0.2em]">NEURAL_CGI::RENDER_ENGINE_v4</span>
+          <span className="text-[8px] font-mono text-[#b400ff]/40 tracking-[0.15em]">RES:4K // FPS:60 // AI_DIFFUSION</span>
+        </div>
       </div>
     </div>
+  )
+}
+
+// ─── Tab Button ───────────────────────────────────────────────────────
+
+function TabButton({ cat, isActive, onClick }: { cat: Category; isActive: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="relative flex-shrink-0 flex items-center gap-2 px-4 sm:px-5 py-2.5 text-[9px] sm:text-[10px] font-mono tracking-[0.2em] uppercase transition-all duration-250"
+      style={{
+        color: isActive ? "#00ffe1" : "rgba(255,255,255,0.3)",
+        background: isActive ? "rgba(0,255,225,0.04)" : "transparent",
+        borderBottom: isActive ? "1px solid rgba(0,255,225,0.5)" : "1px solid transparent",
+      }}
+    >
+      {isActive && (
+        <span
+          className="w-1 h-1 rounded-full bg-[#00ffe1]"
+          style={{ boxShadow: "0 0 6px rgba(0,255,225,1)", animation: "pulse 1.5s infinite" }}
+        />
+      )}
+      {cat.icon}
+      <span>{cat.name}</span>
+    </button>
   )
 }
 
@@ -415,8 +578,8 @@ function ImageSliderModal({
 export function GalleryCatalogoRopa() {
   const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeTab, setActiveTab] = useState("catalogo-producto")
-  const [isChangingTab, setIsChangingTab] = useState(false)
   const [displayedTab, setDisplayedTab] = useState("catalogo-producto")
+  const [isChangingTab, setIsChangingTab] = useState(false)
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
   const activeCategory = categories.find((c) => c.id === displayedTab)
@@ -432,104 +595,154 @@ export function GalleryCatalogoRopa() {
   }
 
   return (
-    <section id="catalogo-ropa" className="relative py-16 sm:py-24 bg-[#050508] overflow-hidden">
-
-      {/* Keyframes globales */}
+    <section
+      id="catalogo-ropa"
+      className="relative py-16 sm:py-24 overflow-hidden"
+      style={{ background: "#03050c" }}
+    >
+      {/* Global keyframes */}
       <style>{`
         @keyframes shimmer {
           0% { background-position: -200% 0 }
           100% { background-position: 200% 0 }
         }
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(18px) }
-          to { opacity: 1; transform: translateY(0) }
+        @keyframes revealUp {
+          from { opacity: 0; transform: translateY(22px) scale(0.98) }
+          to { opacity: 1; transform: translateY(0) scale(1) }
         }
+        @keyframes ticker {
+          from { transform: translateX(0) }
+          to { transform: translateX(-50%) }
+        }
+        @keyframes glitch {
+          0%, 100% { clip-path: none; transform: none }
+          20% { clip-path: polygon(0 15%, 100% 15%, 100% 25%, 0 25%); transform: translate(-2px, 0) }
+          40% { clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); transform: translate(2px, 0) }
+          60% { clip-path: none; transform: none }
+        }
+        @keyframes scanDown {
+          0% { transform: translateY(-100%) }
+          100% { transform: translateY(100vh) }
+        }
+        @keyframes borderPulse {
+          0%, 100% { opacity: 0.15 }
+          50% { opacity: 0.4 }
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
       `}</style>
 
-      {/* Background */}
+      {/* Ambient background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[400px] sm:w-[800px] h-[300px] sm:h-[500px] bg-cyan-600/[0.04] rounded-full blur-[100px] sm:blur-[140px]" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] sm:w-[600px] h-[300px] sm:h-[500px] bg-purple-600/[0.05] rounded-full blur-[90px] sm:blur-[120px]" />
+        {/* Grid */}
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0 opacity-[0.025]"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundImage: "linear-gradient(rgba(0,255,225,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,225,0.5) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
           }}
         />
+        {/* Radial glows */}
+        <div className="absolute top-0 left-1/3 w-[600px] h-[400px] rounded-full blur-[140px]" style={{ background: "rgba(0,200,180,0.04)" }} />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[400px] rounded-full blur-[120px]" style={{ background: "rgba(180,0,255,0.05)" }} />
+        {/* Diagonal accent line */}
+        <div
+          className="absolute top-0 right-0 w-[1px] h-full opacity-10"
+          style={{ background: "linear-gradient(to bottom, transparent, #00ffe1, transparent)", animation: "borderPulse 4s ease infinite" }}
+        />
       </div>
+
+      {/* Scan beam */}
+      <div
+        className="absolute left-0 right-0 h-[1px] pointer-events-none z-10 opacity-20"
+        style={{
+          background: "linear-gradient(90deg, transparent, #00ffe1, transparent)",
+          animation: "scanDown 8s linear infinite",
+        }}
+      />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-10 sm:mb-14" style={{ animation: "fadeSlideUp 0.7s ease both" }}>
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-purple-500/30 bg-purple-500/[0.08] mb-5 sm:mb-6 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-            <Sparkles className="h-3.5 w-3.5 text-purple-400 animate-pulse" />
-            <span className="text-[10px] sm:text-xs font-mono text-purple-300 tracking-widest uppercase font-semibold">
-              Innovación Visual
+        <div className="text-center mb-10 sm:mb-14" style={{ animation: "revealUp 0.7s cubic-bezier(0.16,1,0.3,1) both" }}>
+          {/* System label */}
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded border border-[#00ffe1]/20 bg-[#00ffe1]/04 mb-6" style={{ boxShadow: "0 0 20px rgba(0,255,225,0.06)" }}>
+            <Zap className="h-3 w-3 text-[#00ffe1]" />
+            <span className="text-[9px] font-mono text-[#00ffe1] tracking-[0.35em] uppercase">
+              SYSTEM::VISUAL_AI // MÓDULO_ACTIVO
             </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00ffe1] animate-pulse" style={{ boxShadow: "0 0 8px rgba(0,255,225,0.9)" }} />
           </div>
 
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 font-mono tracking-tight">
-            Imágenes con{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
-              IA Generativa
+          <h2
+            className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-4 leading-none tracking-tight"
+            style={{ fontFamily: "'Rajdhani', sans-serif", letterSpacing: "-0.02em" }}
+          >
+            <GlitchText text="IMÁGENES" className="text-white" />
+            <br />
+            <span className="text-transparent" style={{ WebkitTextStroke: "1px rgba(0,255,225,0.5)" }}>
+              CON{" "}
+            </span>
+            <span
+              className="text-transparent"
+              style={{
+                WebkitTextFillColor: "transparent",
+                WebkitTextStroke: "0px",
+                background: "linear-gradient(90deg, #00ffe1 0%, #b400ff 60%, #00ffe1 100%)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+              }}
+            >
+              IA GENERATIVA
             </span>
           </h2>
 
-          <p className="text-white/50 max-w-2xl mx-auto text-xs sm:text-base leading-relaxed px-4">
-            Fotografía comercial, modelaje y CGI generativo. Elimina los costos de un estudio tradicional y crea campañas hiperrealistas impulsadas por Inteligencia Artificial.
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex justify-center mb-8 sm:mb-12">
-          <div className="inline-flex gap-1 p-1.5 rounded-xl border border-white/[0.06] bg-[#0c0d14]/60 backdrop-blur-md w-full sm:w-auto overflow-x-auto">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => handleTabChange(cat.id)}
-                className={`relative flex-shrink-0 flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-[10px] sm:text-xs font-mono tracking-wider uppercase transition-all duration-300 ${
-                  activeTab === cat.id
-                    ? "text-cyan-300 bg-cyan-500/[0.12] border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
-                    : "text-white/40 hover:text-white/70 border border-transparent"
-                }`}
-              >
-                {cat.icon}
-                <span>{cat.name}</span>
-                {/* Punto activo */}
-                {activeTab === cat.id && (
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-cyan-400 inline-block"
-                    style={{ animation: "shimmer 1.5s ease-in-out infinite" }}
-                  />
-                )}
-              </button>
-            ))}
+          {/* Subtitle with terminal style */}
+          <div className="inline-flex items-start gap-2 mt-2">
+            <span className="text-[#00ffe1]/40 font-mono text-xs mt-0.5">$</span>
+            <p className="text-white/35 max-w-xl text-[11px] sm:text-xs leading-relaxed font-mono text-left">
+              Fotografía comercial, modelaje y CGI generativo. Elimina costos de estudio tradicional — crea campañas hiperrealistas impulsadas por Inteligencia Artificial.
+            </p>
           </div>
         </div>
 
-        {/* Descripción de categoría activa */}
+        {/* Live data ticker */}
+        <DataTicker />
+
+        {/* Tab bar — styled as terminal tabs */}
+        <div
+          className="flex border-b border-[#00ffe1]/10 mb-3 overflow-x-auto"
+          style={{ animation: "revealUp 0.5s ease both 0.1s" }}
+        >
+          {/* Left indicator */}
+          <div className="flex-none flex items-center pr-4 border-r border-[#00ffe1]/08 mr-2">
+            <span className="text-[8px] font-mono text-[#00ffe1]/30 tracking-[0.25em] whitespace-nowrap">SYS:GALLERY</span>
+          </div>
+          {categories.map((cat) => (
+            <TabButton
+              key={cat.id}
+              cat={cat}
+              isActive={activeTab === cat.id}
+              onClick={() => handleTabChange(cat.id)}
+            />
+          ))}
+        </div>
+
+        {/* Category description */}
         {activeCategory && (
           <p
-            className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-8 sm:mb-10"
-            style={{ animation: "fadeSlideUp 0.3s ease both" }}
+            className="text-[9px] sm:text-[10px] font-mono text-[#00ffe1]/25 tracking-[0.2em] uppercase mb-8"
+            style={{ animation: "revealUp 0.3s ease both" }}
           >
+            <span className="text-[#b400ff]/50 mr-2">//</span>
             {activeCategory.description}
           </p>
         )}
 
-        {/* Masonry Grid con fade transition entre tabs */}
-        <div
-          style={{
-            opacity: isChangingTab ? 0 : 1,
-            transition: "opacity 0.18s ease",
-          }}
-        >
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6">
+        {/* Grid */}
+        <div style={{ opacity: isChangingTab ? 0 : 1, transition: "opacity 0.18s ease" }}>
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-5">
             {activeCategory?.items.map((item, index) => (
-              <SpotlightCard
+              <HoloCard
                 key={`${displayedTab}-${item.id}`}
                 item={item}
                 index={index}
@@ -540,29 +753,52 @@ export function GalleryCatalogoRopa() {
         </div>
 
         {/* CTA */}
-        <div className="mt-12 sm:mt-16 text-center">
+        <div className="mt-14 sm:mt-20 text-center" style={{ animation: "revealUp 0.6s ease both 0.3s" }}>
+          {/* Label above */}
+          <p className="text-[9px] font-mono text-white/20 tracking-[0.3em] uppercase mb-4">
+            INICIAR_PROTOCOLO::CAMPAÑA_IA
+          </p>
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-3 px-8 py-4 font-mono text-xs sm:text-sm tracking-wider uppercase overflow-hidden rounded-xl hover:scale-105 transition-transform duration-300"
+            className="group relative inline-flex items-center gap-3 px-8 sm:px-10 py-4 font-mono text-[11px] sm:text-xs tracking-[0.25em] uppercase text-[#00ffe1] overflow-hidden rounded transition-all duration-300"
+            style={{
+              border: "1px solid rgba(0,255,225,0.3)",
+              background: "rgba(0,255,225,0.03)",
+              boxShadow: "0 0 20px rgba(0,255,225,0.08), inset 0 0 20px rgba(0,255,225,0.02)",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget
+              el.style.boxShadow = "0 0 40px rgba(0,255,225,0.2), inset 0 0 30px rgba(0,255,225,0.05)"
+              el.style.borderColor = "rgba(0,255,225,0.6)"
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget
+              el.style.boxShadow = "0 0 20px rgba(0,255,225,0.08), inset 0 0 20px rgba(0,255,225,0.02)"
+              el.style.borderColor = "rgba(0,255,225,0.3)"
+            }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 backdrop-blur-sm transition-all duration-500 group-hover:from-cyan-500/30 group-hover:to-purple-500/30 group-hover:border-cyan-300/60 shadow-[0_0_20px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]" />
-            <Sparkles className="relative z-10 h-5 w-5 text-cyan-400 group-hover:text-cyan-300 animate-pulse" />
-            <span className="relative z-10 text-white font-semibold group-hover:text-cyan-100 transition-colors">
-              Crear mi campaña IA
-            </span>
+            {/* Sweep animation */}
+            <span
+              className="absolute inset-0 translate-x-[-110%] group-hover:translate-x-[110%] transition-transform duration-700 pointer-events-none"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(0,255,225,0.08), transparent)" }}
+            />
+            <CornerBrackets color="#00ffe1" size={8} />
+            <Zap className="relative z-10 h-4 w-4 group-hover:animate-pulse" />
+            <span className="relative z-10 font-bold">CREAR MI CAMPAÑA IA</span>
+            <span className="relative z-10 text-[#00ffe1]/40">▶</span>
           </a>
-        </div>
 
-        {/* Modal */}
-        {selectedItem && (
-          <ImageSliderModal
-            item={selectedItem}
-            onClose={() => setSelectedItem(null)}
-          />
-        )}
+          {/* Data footnote */}
+          <p className="mt-4 text-[8px] font-mono text-white/12 tracking-[0.2em]">
+            CONEXIÓN SEGURA // WhatsApp::{WHATSAPP_NUMBER} // LATENCIA:~0ms
+          </p>
+        </div>
       </div>
+
+      {/* Modal */}
+      {selectedItem && <HoloModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
     </section>
   )
 }

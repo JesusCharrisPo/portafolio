@@ -246,7 +246,7 @@ export function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white font-mono">WhatsApp Directo</p>
-                      <p className="text-xs text-white/30 font-mono">+57 301 913 2001</p>
+                      <p className="text-xs text-white/30 font-mono">+57 3043819731</p>
                     </div>
                   </div>
 

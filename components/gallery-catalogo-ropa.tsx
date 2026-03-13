@@ -139,32 +139,7 @@ function GlitchText({ text, className }: { text: string; className?: string }) {
   )
 }
 
-// ─── Live Data Ticker ─────────────────────────────────────────────────
 
-function DataTicker() {
-  const data = [
-    "SYS::NEURAL_RENDER_v4.2",
-    "NODES: 1,284 ACTIVE",
-    "LATENCY: 12ms",
-    "GPU_CLUSTER: 98.3%",
-    "DIFFUSION_STEPS: 50",
-    "RESOLUTION: 4K_UPSCALE",
-    "MODELS_LOADED: 7",
-    "QUEUE: 0 PENDING",
-  ]
-  return (
-    <div className="overflow-hidden border-y border-[#00ffe1]/10 bg-black/40 backdrop-blur-sm py-1.5 mb-10">
-      <div className="flex gap-8 animate-[ticker_18s_linear_infinite] whitespace-nowrap">
-        {[...data, ...data].map((item, i) => (
-          <span key={i} className="text-[9px] font-mono text-[#00ffe1]/40 tracking-[0.2em] uppercase flex items-center gap-2">
-            <span className="w-1 h-1 rounded-full bg-[#00ffe1]/60 inline-block" />
-            {item}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 // ─── Scanline Overlay ─────────────────────────────────────────────────
 
@@ -610,10 +585,6 @@ export function GalleryCatalogoRopa() {
           from { opacity: 0; transform: translateY(22px) scale(0.98) }
           to { opacity: 1; transform: translateY(0) scale(1) }
         }
-        @keyframes ticker {
-          from { transform: translateX(0) }
-          to { transform: translateX(-50%) }
-        }
         @keyframes glitch {
           0%, 100% { clip-path: none; transform: none }
           20% { clip-path: polygon(0 15%, 100% 15%, 100% 25%, 0 25%); transform: translate(-2px, 0) }
@@ -704,9 +675,6 @@ export function GalleryCatalogoRopa() {
             </p>
           </div>
         </div>
-
-        {/* Live data ticker */}
-        <DataTicker />
 
         {/* Tab bar — styled as terminal tabs */}
         <div

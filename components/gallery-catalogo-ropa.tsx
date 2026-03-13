@@ -42,7 +42,6 @@ const categories: Category[] = [
     icon: <Layers className="h-4 w-4" />,
     description: "Visualización de producto generada 100% con IA (CGI Generativo)",
     items: [
-
       {
         id: "ia-mbloom",
         title: "MBloom Body Butters",
@@ -54,10 +53,9 @@ const categories: Category[] = [
           "/mbloom2.jpg",
           "/mbloom3.jpg",
           "/mbloom4.jpg",
-          "/mbloom5.jpg"
-        ]
+          "/mbloom5.jpg",
+        ],
       },
-
       {
         id: "ia-laurent-handbag",
         title: "Laurent Luxury Handbag",
@@ -68,10 +66,9 @@ const categories: Category[] = [
           "/laurent-bag-1.jpg",
           "/laurent-bag-2.jpg",
           "/laurent-bag-3.jpg",
-          "/laurent-bag-4.jpg"
-        ]
+          "/laurent-bag-4.jpg",
+        ],
       },
-
       {
         id: "ia-laurent-tote",
         title: "Laurent Perforated Tote",
@@ -79,13 +76,11 @@ const categories: Category[] = [
         type: "image",
         thumbnail: "/laurent-red-tote.jpg",
         images: [
-          "/laurent-red-tote.jpg"
-        ]
-      }
-
+          "/laurent-red-tote.jpg",
+        ],
+      },
     ],
   },
-
   {
     id: "modelos-ia",
     name: "Modelos IA",
@@ -93,7 +88,6 @@ const categories: Category[] = [
     icon: <Sparkles className="h-4 w-4" />,
     description: "Avatares hiperrealistas y campañas generadas con IA",
     items: [
-
       {
         id: "ia-tuxxy",
         title: "Tuxxy Trap Artist",
@@ -105,10 +99,9 @@ const categories: Category[] = [
           "/tuxxy-2.jpg",
           "/tuxxy-3.jpg",
           "/tuxxy-4.jpg",
-          "/tuxxy-5.jpg"
-        ]
+          "/tuxxy-5.jpg",
+        ],
       },
-
       {
         id: "ia-mbloom-model",
         title: "MBloom Beauty Campaign",
@@ -117,13 +110,11 @@ const categories: Category[] = [
         thumbnail: "/mbloom-model-1.jpg",
         images: [
           "/mbloom-model-1.jpg",
-          "/mbloom-model-2.jpg"
-        ]
-      }
-
+          "/mbloom-model-2.jpg",
+        ],
+      },
     ],
   },
-
   {
     id: "editorial",
     name: "Editorial AI",
@@ -138,9 +129,9 @@ const categories: Category[] = [
         type: "image",
         thumbnail: "/tuxxy-3.jpg",
         images: [
-          "/tuxxy-3.jpg"
-        ]
-      }
+          "/tuxxy-3.jpg",
+        ],
+      },
     ],
   },
 ]
@@ -440,7 +431,6 @@ export function GalleryCatalogoRopa() {
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap');
       `}</style>
 
-      {/* Ambient BG */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 opacity-[0.018]" style={{ backgroundImage: "linear-gradient(rgba(0,255,225,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,225,0.6) 1px,transparent 1px)", backgroundSize: "64px 64px" }} />
         <div className="absolute top-[-10%] left-[20%] w-[700px] h-[500px] rounded-full" style={{ background: "radial-gradient(ellipse,rgba(0,200,180,0.05) 0%,transparent 70%)", animation: "floatGlow 8s ease infinite" }} />
@@ -449,13 +439,11 @@ export function GalleryCatalogoRopa() {
         <div className="absolute top-0 right-0 w-px h-full" style={{ background: "linear-gradient(to bottom,transparent,rgba(180,0,255,0.06),transparent)" }} />
       </div>
 
-      {/* Scan beam */}
       <div className="absolute left-0 right-0 h-[2px] pointer-events-none z-10"
         style={{ background: "linear-gradient(90deg,transparent,rgba(0,255,225,0.15),transparent)", animation: "scanDown 10s linear infinite", boxShadow: "0 0 12px rgba(0,255,225,0.1)" }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12 sm:mb-16" style={{ animation: "revealUp 0.7s cubic-bezier(0.16,1,0.3,1) both" }}>
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-5">
@@ -490,7 +478,6 @@ export function GalleryCatalogoRopa() {
           </div>
         </div>
 
-        {/* BODY */}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
           <CategorySidebar categories={categories} activeId={activeTab} onChange={handleTabChange} />
           <div className="flex-1 min-w-0">

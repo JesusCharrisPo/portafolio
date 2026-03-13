@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 import { motion } from "framer-motion"
 
-const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE_GENERAL =
   "🚀 ¡Hola Jesus! 👋 Vi tu portafolio y me gustaría hablar sobre un proyecto 💡 ¿Tienes disponibilidad para una llamada? 📞✨"
 const WHATSAPP_MESSAGE_MEETING =
@@ -294,15 +294,15 @@ export function Contact() {
                   href={whatsappUrlGeneral}
                   icon={Phone}
                   label="WhatsApp / Teléfono"
-                  value="+57 301 913 2001 🇨🇴"
+                  value="+57 3043819731"
                   index={0}
                   external
                 />
                 <ContactLink
-                  href="mailto:contacto@jesuscharris.com"
+                  href="mailto:charrisjesus167@outlook.com"
                   icon={Mail}
                   label="Correo Electrónico"
-                  value="contacto@jesuscharris.com"
+                  value="charrisjesus167@outlook.com"
                   index={1}
                 />
                 <ContactLink

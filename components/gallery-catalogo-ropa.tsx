@@ -1,7 +1,19 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect, MouseEvent } from "react"
-import { Sparkles, Camera, Layers, ChevronLeft, ChevronRight, X, Zap, AlertCircle } from "lucide-react"
+import { useState, useRef, useEffect, MouseEvent } from "react"
+import {
+  ImageIcon,
+  Sparkles,
+  Camera,
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Maximize2,
+  AlertCircle,
+  Zap,
+  Activity,
+} from "lucide-react"
 
 // ─── Types ────────────────────────────────────────────────────────────
 
@@ -17,7 +29,6 @@ type MediaItem = {
 type Category = {
   id: string
   name: string
-  code: string
   icon: React.ReactNode
   description: string
   items: MediaItem[]
@@ -27,388 +38,610 @@ type Category = {
 
 const categories: Category[] = [
   {
-    id: "catalogo-producto", name: "Catálogo Producto", code: "01",
-    icon: <Layers className="h-4 w-4" />,
-    description: "CGI Generativo — visualización de producto 100% IA",
+    id: "catalogo-producto",
+    name: "Catálogo Producto",
+    icon: <Layers className="h-3.5 w-3.5" />,
+    description: "Visualización de producto generada 100% con IA (CGI Generativo)",
     items: [
-      { id: "ia-mbloom",  title: "MBloom Body Butters", description: "Set virtual botánico con simulación de luz natural.", type: "image", thumbnail: "/mbloom-ia-1.jpg", images: ["/mbloom-ia-1.jpg", "/mbloom-ia-2.jpg"] },
-      { id: "ia-petcare", title: "Pet Care Brush",      description: "Simulación de fluidos y partículas generativas.",    type: "image", thumbnail: "/petcare-ia.jpg",  images: ["/petcare-ia.jpg"] },
-      { id: "ia-shoes",   title: "Sneakers Focus",      description: "Zapatos urbanos en entornos sintéticos.",            type: "image", thumbnail: "/sneaker-ia.jpg", images: ["/sneaker-ia.jpg", "/sneaker-ia-2.jpg"] },
+      {
+        id: "ia-mbloom",
+        title: "MBloom Body Butters",
+        description: "Set virtual botánico con simulación de luz natural.",
+        type: "image",
+        thumbnail: "/mbloom-ia-1.jpg",
+        images: ["/mbloom-ia-1.jpg", "/mbloom-ia-2.jpg"],
+      },
+      {
+        id: "ia-petcare",
+        title: "Pet Care Brush",
+        description: "Simulación de fluidos y partículas generativas.",
+        type: "image",
+        thumbnail: "/petcare-ia.jpg",
+        images: ["/petcare-ia.jpg"],
+      },
+      {
+        id: "ia-shoes",
+        title: "Sneakers Focus",
+        description: "Zapatos urbanos integrados en entornos sintéticos.",
+        type: "image",
+        thumbnail: "/sneaker-ia.jpg",
+        images: ["/sneaker-ia.jpg", "/sneaker-ia-2.jpg"],
+      },
     ],
   },
   {
-    id: "modelos-ia", name: "Modelos IA", code: "02",
-    icon: <Sparkles className="h-4 w-4" />,
-    description: "Avatares hiperrealistas — fashion films sintéticos",
+    id: "modelos-ia",
+    name: "Modelos IA",
+    icon: <Sparkles className="h-3.5 w-3.5" />,
+    description: "Avatares hiperrealistas y fashion films sintéticos",
     items: [
-      { id: "ia-avatar-1",        title: "Campaña Cosmética",      description: "Modelaje hiperrealista con texturas fotorrealistas.", type: "image", thumbnail: "/modelo-ia-1.jpg",       images: ["/modelo-ia-1.jpg", "/modelo-ia-2.jpg"] },
-      { id: "ia-macone-virtual",  title: "Mac One | Virtual Try-On", description: "Prendas reales sobre modelos generados por IA.",   type: "image", thumbnail: "/macone-ia-modelo.jpg", images: ["/macone-ia-modelo.jpg"] },
+      {
+        id: "ia-avatar-1",
+        title: "Campaña Cosmética",
+        description: "Modelaje hiperrealista con texturas de piel fotorrealistas.",
+        type: "image",
+        thumbnail: "/modelo-ia-1.jpg",
+        images: ["/modelo-ia-1.jpg", "/modelo-ia-2.jpg"],
+      },
+      {
+        id: "ia-macone-virtual",
+        title: "Mac One | Virtual Try-On",
+        description: "Prendas reales aplicadas sobre modelos generados por IA.",
+        type: "image",
+        thumbnail: "/macone-ia-modelo.jpg",
+        images: ["/macone-ia-modelo.jpg"],
+      },
     ],
   },
   {
-    id: "editorial", name: "Editorial AI", code: "03",
-    icon: <Camera className="h-4 w-4" />,
-    description: "Dirección de arte — iluminación cinematográfica por IA",
+    id: "editorial",
+    name: "Editorial AI",
+    icon: <Camera className="h-3.5 w-3.5" />,
+    description: "Dirección de arte, iluminación cinematográfica y conceptos visuales",
     items: [
-      { id: "ia-neon-concept", title: "Concepto Neón & Humo", description: "Iluminación dual retro-futurista generada por IA.", type: "image", thumbnail: "/neon-ia-1.jpg", images: ["/neon-ia-1.jpg", "/neon-ia-2.jpg"] },
+      {
+        id: "ia-neon-concept",
+        title: "Concepto Neón & Humo",
+        description: "Iluminación dual retro-futurista generada por IA.",
+        type: "image",
+        thumbnail: "/neon-ia-1.jpg",
+        images: ["/neon-ia-1.jpg", "/neon-ia-2.jpg"],
+      },
     ],
   },
 ]
 
-const WA_URL = `https://wa.me/573019132001?text=${encodeURIComponent("🤖 ¡Hola Jesus! Vi tu portafolio de *CGI con IA*. Me interesa crear una campaña visual para mi marca. ¿Podemos hablar? 🚀")}`
+const WHATSAPP_NUMBER = "573019132001"
+const WHATSAPP_MESSAGE =
+  "🤖 ¡Hola Jesus! 👋 Vi tu portafolio de *Imágenes y CGI con Inteligencia Artificial*. Me interesa crear una campaña visual para mi marca sin necesidad de un estudio físico. ¿Podemos hablar? 🚀"
 
-// ─── Image with loading state ─────────────────────────────────────────
+// ─── Utility: Glitch Text ─────────────────────────────────────────────
 
-function Img({ src, alt, className, style }: { src: string; alt: string; className?: string; style?: React.CSSProperties }) {
-  const [loaded, setLoaded] = useState(false)
-  const [error, setError]   = useState(false)
-  if (error) return (
-    <div className={className} style={{ ...style, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, background: "#0d0d14" }}>
-      <AlertCircle style={{ width: 28, height: 28, color: "rgba(255,255,255,0.15)" }} />
-      <span style={{ fontSize: 10, fontFamily: "monospace", color: "rgba(255,255,255,0.15)", letterSpacing: "0.15em" }}>SIN IMAGEN</span>
-    </div>
-  )
+function GlitchText({ text, className }: { text: string; className?: string }) {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      {!loaded && <div className={className} style={{ ...style, position: "absolute", inset: 0, background: "linear-gradient(135deg,#0d0d14,#131320)", animation: "pulse 2s ease infinite" }} />}
-      <img src={src} alt={alt} loading="lazy" onLoad={() => setLoaded(true)} onError={() => setError(true)}
-        className={className} style={{ ...style, opacity: loaded ? 1 : 0, transition: "opacity 0.6s ease" }} />
+    <span className={`relative inline-block ${className}`} data-text={text}>
+      {text}
+      <span
+        aria-hidden
+        className="absolute inset-0 text-cyan-400 opacity-0 hover:opacity-60 transition-opacity duration-75"
+        style={{ clipPath: "polygon(0 20%, 100% 20%, 100% 40%, 0 40%)", transform: "translateX(-2px)" }}
+      >
+        {text}
+      </span>
+      <span
+        aria-hidden
+        className="absolute inset-0 text-fuchsia-500 opacity-0 hover:opacity-40 transition-opacity duration-75"
+        style={{ clipPath: "polygon(0 60%, 100% 60%, 100% 80%, 0 80%)", transform: "translateX(2px)" }}
+      >
+        {text}
+      </span>
+    </span>
+  )
+}
+
+// ─── Scanline Overlay ─────────────────────────────────────────────────
+
+function ScanlineOverlay() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 z-50 opacity-[0.03]"
+      style={{
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,225,0.15) 2px, rgba(0,255,225,0.15) 4px)",
+        backgroundSize: "100% 4px",
+      }}
+    />
+  )
+}
+
+// ─── Corner Brackets ─────────────────────────────────────────────────
+
+function CornerBrackets({ color = "#00ffe1", size = 14 }: { color?: string; size?: number }) {
+  return (
+    <>
+      <span className="absolute top-0 left-0 pointer-events-none" style={{ borderTop: `2px solid ${color}`, borderLeft: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+      <span className="absolute top-0 right-0 pointer-events-none" style={{ borderTop: `2px solid ${color}`, borderRight: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+      <span className="absolute bottom-0 left-0 pointer-events-none" style={{ borderBottom: `2px solid ${color}`, borderLeft: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+      <span className="absolute bottom-0 right-0 pointer-events-none" style={{ borderBottom: `2px solid ${color}`, borderRight: `2px solid ${color}`, width: size, height: size, opacity: 0.7 }} />
+    </>
+  )
+}
+
+// ─── Smart Image ──────────────────────────────────────────────────────
+
+function SmartImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [hasError, setHasError] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  if (hasError) {
+    return (
+      <div className={`flex flex-col items-center justify-center gap-2 bg-[#050810] text-[#00ffe1]/20 py-20 ${className}`}>
+        <AlertCircle className="h-6 w-6" />
+        <span className="text-[9px] font-mono tracking-[0.3em] uppercase">SIN_SEÑAL</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative overflow-hidden">
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-[#050810]">
+          <div
+            className="h-full w-full"
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, rgba(0,255,225,0.04) 50%, transparent 100%)",
+              backgroundSize: "200% 100%",
+              animation: "shimmer 2s infinite linear",
+            }}
+          />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setHasError(true)}
+        className={`${className} transition-opacity duration-700 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+      />
     </div>
   )
 }
 
-// ─── Main export ──────────────────────────────────────────────────────
+// ─── Holographic Card ─────────────────────────────────────────────────
 
-export function GalleryCatalogoRopa() {
-  const [catIdx,  setCatIdx]  = useState(0)
-  const [itemIdx, setItemIdx] = useState(0)
-  const [imgIdx,  setImgIdx]  = useState(0)
-  const [modal,   setModal]   = useState(false)
-  const [fade,    setFade]    = useState(true)
+function HoloCard({ item, index, onClick }: { item: MediaItem; index: number; onClick: () => void }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+  const [glow, setGlow] = useState({ x: 50, y: 50 })
+  const [isHovered, setIsHovered] = useState(false)
 
-  const cat  = categories[catIdx]
-  const item = cat.items[itemIdx]
-  const imgs = item.images.length > 0 ? item.images : [item.thumbnail].filter(Boolean)
-  const src  = imgs[imgIdx] || ""
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const cx = (e.clientX - rect.left) / rect.width
+    const cy = (e.clientY - rect.top) / rect.height
+    setTilt({ x: (cy - 0.5) * -10, y: (cx - 0.5) * 10 })
+    setGlow({ x: cx * 100, y: cy * 100 })
+  }
 
-  // Smooth transition helper
-  const transition = useCallback((fn: () => void) => {
-    setFade(false)
-    setTimeout(() => { fn(); setFade(true) }, 220)
-  }, [])
+  const resetTilt = () => {
+    setTilt({ x: 0, y: 0 })
+    setIsHovered(false)
+  }
 
-  const selectCat  = (i: number)  => { if (i !== catIdx)  transition(() => { setCatIdx(i);  setItemIdx(0); setImgIdx(0) }) }
-  const selectItem = (i: number)  => { if (i !== itemIdx) transition(() => { setItemIdx(i); setImgIdx(0) }) }
-  const prevImg    = useCallback(() => imgs.length > 1 && transition(() => setImgIdx(p => (p - 1 + imgs.length) % imgs.length)), [imgs.length, transition])
-  const nextImg    = useCallback(() => imgs.length > 1 && transition(() => setImgIdx(p => (p + 1) % imgs.length)),               [imgs.length, transition])
-
-  useEffect(() => {
-    if (modal) return
-    const h = (e: KeyboardEvent) => { if (e.key === "ArrowLeft") prevImg(); if (e.key === "ArrowRight") nextImg() }
-    window.addEventListener("keydown", h)
-    return () => window.removeEventListener("keydown", h)
-  }, [modal, prevImg, nextImg])
+  const hasThumbnail = !!item.thumbnail || item.images.length > 0
+  const displayImage = item.thumbnail || item.images[0] || ""
+  const imageCount = item.images.length
 
   return (
-    <section style={{ background: "#07070f", minHeight: "100vh", display: "flex", flexDirection: "column", fontFamily: "'Inter', sans-serif" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-      `}</style>
-
-      {/* ══ HEADER ══════════════════════════════════════════════════════ */}
-      <header style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "20px 32px", borderBottom: "1px solid rgba(255,255,255,0.06)",
-        animation: "fadeUp 0.5s ease both",
-      }}>
-        {/* Title */}
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22d3a5", boxShadow: "0 0 8px #22d3a5", animation: "pulse 2s infinite" }} />
-            <span style={{ fontSize: 11, fontFamily: "monospace", color: "rgba(255,255,255,0.35)", letterSpacing: "0.2em", textTransform: "uppercase" }}>Visual AI Studio</span>
-          </div>
-          <h2 style={{ fontSize: "clamp(1.4rem,3vw,2rem)", fontWeight: 700, color: "#fff", fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.02em" }}>
-            Imágenes con IA Generativa
-          </h2>
-        </div>
-
-        {/* CTA */}
-        <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={{
-          display: "flex", alignItems: "center", gap: 10, padding: "12px 24px",
-          background: "#22d3a5", color: "#07070f", borderRadius: 8, fontWeight: 700,
-          fontSize: 14, textDecoration: "none", fontFamily: "'Space Grotesk', sans-serif",
-          letterSpacing: "-0.01em", flexShrink: 0, transition: "all 0.2s ease",
-          boxShadow: "0 0 32px rgba(34,211,165,0.25)",
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={resetTilt}
+      onClick={onClick}
+      className="relative cursor-pointer break-inside-avoid mb-5 sm:mb-6"
+      style={{
+        animation: `revealUp 0.5s cubic-bezier(0.16,1,0.3,1) both`,
+        animationDelay: `${index * 90}ms`,
+        perspective: "1000px",
+      }}
+    >
+      {/* Outer glow ring on hover */}
+      <div
+        className="absolute -inset-[1px] rounded-lg transition-opacity duration-300 pointer-events-none"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(ellipse at ${glow.x}% ${glow.y}%, rgba(0,255,225,0.35) 0%, rgba(180,0,255,0.15) 50%, transparent 70%)`,
         }}
-          onMouseEnter={e => { const el = e.currentTarget; el.style.background = "#1ab894"; el.style.boxShadow = "0 0 40px rgba(34,211,165,0.4)"; el.style.transform = "translateY(-1px)" }}
-          onMouseLeave={e => { const el = e.currentTarget; el.style.background = "#22d3a5"; el.style.boxShadow = "0 0 32px rgba(34,211,165,0.25)"; el.style.transform = "translateY(0)" }}
-        >
-          <Zap style={{ width: 16, height: 16 }} />
-          Crear campaña con IA
-        </a>
-      </header>
+      />
 
-      {/* ══ CATEGORY TABS ═══════════════════════════════════════════════ */}
-      <nav style={{
-        display: "flex", gap: 0, padding: "0 32px",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        animation: "fadeUp 0.5s ease both 0.05s", overflowX: "auto",
-      }}>
-        {categories.map((c, i) => {
-          const active = i === catIdx
-          return (
-            <button key={c.id} onClick={() => selectCat(i)} style={{
-              display: "flex", alignItems: "center", gap: 8,
-              padding: "16px 24px", background: "none", border: "none",
-              borderBottom: active ? "2px solid #22d3a5" : "2px solid transparent",
-              color: active ? "#fff" : "rgba(255,255,255,0.4)",
-              fontSize: 14, fontWeight: active ? 600 : 400, cursor: "pointer",
-              fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.01em",
-              transition: "all 0.2s ease", whiteSpace: "nowrap", flexShrink: 0,
-            }}
-              onMouseEnter={e => { if (!active) e.currentTarget.style.color = "rgba(255,255,255,0.7)" }}
-              onMouseLeave={e => { if (!active) e.currentTarget.style.color = "rgba(255,255,255,0.4)" }}
-            >
-              <span style={{ color: active ? "#22d3a5" : "rgba(255,255,255,0.3)", display: "flex" }}>{c.icon}</span>
-              {c.name}
-            </button>
-          )
-        })}
-      </nav>
+      {/* Card body */}
+      <div
+        className="relative rounded-lg border border-[#00ffe1]/10 bg-[#060a12] overflow-hidden transition-all duration-150"
+        style={{
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(0)`,
+          transformStyle: "preserve-3d",
+          boxShadow: isHovered
+            ? "0 0 30px rgba(0,255,225,0.06), inset 0 0 40px rgba(0,0,0,0.5)"
+            : "0 2px 20px rgba(0,0,0,0.6)",
+        }}
+      >
+        {/* Scanlines on card */}
+        <ScanlineOverlay />
 
-      {/* ══ MAIN CONTENT ════════════════════════════════════════════════ */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", gap: 0 }}>
+        {/* Corner brackets */}
+        <CornerBrackets color="#00ffe1" size={10} />
 
-        {/* ── HERO IMAGE ── */}
-        <div style={{
-          position: "relative", width: "100%", aspectRatio: "16/8", background: "#0d0d14",
-          opacity: fade ? 1 : 0, transition: "opacity 0.22s ease",
-          animation: "fadeUp 0.5s ease both 0.1s",
-          overflow: "hidden", cursor: "pointer",
-        }} onClick={() => setModal(true)}>
-
-          <Img src={src} alt={item.title} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-
-          {/* Bottom gradient */}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(7,7,15,0.95) 0%, rgba(7,7,15,0.3) 40%, transparent 70%)", pointerEvents: "none" }} />
-
-          {/* Click to expand hint */}
-          <div style={{
-            position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
-            background: "rgba(0,0,0,0.6)", backdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8,
-            padding: "10px 20px", color: "rgba(255,255,255,0.7)", fontSize: 12,
-            fontFamily: "monospace", letterSpacing: "0.15em", pointerEvents: "none",
-            opacity: 0.7,
-          }}>VER IMAGEN COMPLETA</div>
-
-          {/* Nav arrows — only if multiple imgs */}
-          {imgs.length > 1 && (<>
-            <button onClick={e => { e.stopPropagation(); prevImg() }} style={{
-              position: "absolute", left: 20, top: "50%", transform: "translateY(-50%)",
-              width: 48, height: 48, borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)",
-              background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)",
-              color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-              transition: "all 0.2s ease",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#22d3a5"; e.currentTarget.style.color = "#22d3a5" }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "#fff" }}
-            ><ChevronLeft style={{ width: 20, height: 20 }} /></button>
-
-            <button onClick={e => { e.stopPropagation(); nextImg() }} style={{
-              position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)",
-              width: 48, height: 48, borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)",
-              background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)",
-              color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-              transition: "all 0.2s ease",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#22d3a5"; e.currentTarget.style.color = "#22d3a5" }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "#fff" }}
-            ><ChevronRight style={{ width: 20, height: 20 }} /></button>
-
-            {/* Dot indicators */}
-            <div style={{ position: "absolute", bottom: 80, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
-              {imgs.map((_, i) => (
-                <button key={i} onClick={e => { e.stopPropagation(); transition(() => setImgIdx(i)) }} style={{
-                  width: i === imgIdx ? 24 : 8, height: 8, borderRadius: 4, border: "none", cursor: "pointer",
-                  background: i === imgIdx ? "#22d3a5" : "rgba(255,255,255,0.25)",
-                  boxShadow: i === imgIdx ? "0 0 10px rgba(34,211,165,0.6)" : "none",
-                  transition: "all 0.3s ease", padding: 0,
-                }} />
-              ))}
-            </div>
-          </>)}
-
-          {/* Item info overlay */}
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 32px", pointerEvents: "none" }}>
-            {/* Badge */}
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              background: "rgba(34,211,165,0.12)", border: "1px solid rgba(34,211,165,0.3)",
-              borderRadius: 6, padding: "4px 12px", marginBottom: 10,
-            }}>
-              <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#22d3a5", animation: "pulse 2s infinite" }} />
-              <span style={{ fontSize: 10, fontFamily: "monospace", color: "#22d3a5", letterSpacing: "0.15em" }}>100% IA GENERATIVA</span>
-              {imgs.length > 1 && <span style={{ fontSize: 10, fontFamily: "monospace", color: "rgba(34,211,165,0.6)", marginLeft: 6 }}>{imgs.length} variaciones</span>}
-            </div>
-            <h3 style={{
-              fontSize: "clamp(1.8rem,4vw,3.5rem)", fontWeight: 700, color: "#fff",
-              fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.03em",
-              lineHeight: 1.05, marginBottom: 8, textShadow: "0 2px 20px rgba(0,0,0,0.5)",
-            }}>{item.title}</h3>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", fontWeight: 400, maxWidth: 480 }}>{item.description}</p>
-          </div>
+        {/* HUD badge */}
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded border border-[#00ffe1]/20 bg-black/70 backdrop-blur-md">
+          <Activity className="h-2.5 w-2.5 text-[#00ffe1] animate-pulse" />
+          <span className="text-[8px] font-mono font-bold text-[#00ffe1] tracking-[0.25em]">GEN·IA</span>
         </div>
 
-        {/* ── ITEM THUMBNAILS ── */}
-        <div style={{
-          display: "flex", gap: 2, padding: "2px 0", background: "#0a0a12",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-          animation: "fadeUp 0.5s ease both 0.15s",
-          overflowX: "auto",
-        }}>
-          {cat.items.map((it, i) => {
-            const active = i === itemIdx
-            const thumb  = it.thumbnail || it.images[0] || ""
-            return (
-              <button key={it.id} onClick={() => selectItem(i)} style={{
-                position: "relative", flexShrink: 0, width: 140, height: 90, border: "none",
-                outline: active ? "2px solid #22d3a5" : "2px solid transparent",
-                outlineOffset: -2, cursor: "pointer", overflow: "hidden",
-                transition: "all 0.2s ease", background: "#0d0d14",
-              }}>
-                {thumb && <img src={thumb} alt={it.title} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: active ? 1 : 0.35, transition: "opacity 0.2s ease" }} />}
-                {/* Active glow */}
-                {active && <div style={{ position: "absolute", inset: 0, background: "rgba(34,211,165,0.08)" }} />}
-                {/* Label */}
-                <div style={{
-                  position: "absolute", bottom: 0, left: 0, right: 0, padding: "6px 8px",
-                  background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)",
-                }}>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: active ? "#22d3a5" : "rgba(255,255,255,0.5)", fontFamily: "'Space Grotesk',sans-serif", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {it.title}
-                  </span>
-                </div>
-                {/* Number badge */}
-                <div style={{ position: "absolute", top: 6, left: 6, background: active ? "#22d3a5" : "rgba(0,0,0,0.6)", borderRadius: 4, padding: "2px 6px" }}>
-                  <span style={{ fontSize: 9, fontFamily: "monospace", color: active ? "#07070f" : "rgba(255,255,255,0.4)", fontWeight: 700 }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-              </button>
-            )
-          })}
+        {/* Signal strength dots */}
+        <div className="absolute top-3 right-3 z-20 flex gap-0.5 items-end">
+          {[1, 2, 3, 4].map((bar) => (
+            <span
+              key={bar}
+              className="w-1 rounded-sm bg-[#b400ff]"
+              style={{ height: `${bar * 4}px`, opacity: 0.7 + bar * 0.05 }}
+            />
+          ))}
         </div>
 
-        {/* ── CATEGORY DESCRIPTION ── */}
-        <div style={{
-          padding: "16px 32px",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-          animation: "fadeUp 0.5s ease both 0.2s",
-        }}>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", fontFamily: "monospace", letterSpacing: "0.05em" }}>
-            <span style={{ color: "rgba(34,211,165,0.5)", marginRight: 8 }}>—</span>
-            {cat.description}
-          </p>
-        </div>
-      </main>
+        {/* Image area */}
+        <div className="relative overflow-hidden">
+          {hasThumbnail ? (
+            <>
+              <SmartImage
+                src={displayImage}
+                alt={item.title}
+                className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
 
-      {/* ══ MODAL ════════════════════════════════════════════════════════ */}
-      {modal && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 50,
-          background: "rgba(3,3,10,0.97)", backdropFilter: "blur(20px)",
-          display: "flex", flexDirection: "column",
-          animation: "fadeIn 0.18s ease both",
-        }} onClick={() => setModal(false)}>
-
-          {/* Modal top bar */}
-          <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "16px 24px", borderBottom: "1px solid rgba(255,255,255,0.07)",
-            flexShrink: 0,
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22d3a5", boxShadow: "0 0 8px #22d3a5", animation: "pulse 2s infinite" }} />
-              <span style={{ fontSize: 16, fontWeight: 600, color: "#fff", fontFamily: "'Space Grotesk',sans-serif" }}>{item.title}</span>
-              {imgs.length > 1 && (
-                <span style={{ fontSize: 12, fontFamily: "monospace", color: "rgba(34,211,165,0.5)" }}>
-                  {imgIdx + 1} / {imgs.length}
-                </span>
+              {/* Holographic shimmer on image hover */}
+              {isHovered && (
+                <div
+                  className="absolute inset-0 pointer-events-none mix-blend-screen"
+                  style={{
+                    background: `radial-gradient(ellipse at ${glow.x}% ${glow.y}%, rgba(0,255,225,0.12) 0%, rgba(180,0,255,0.08) 40%, transparent 70%)`,
+                  }}
+                />
               )}
-            </div>
-            <button onClick={() => setModal(false)} style={{
-              display: "flex", alignItems: "center", gap: 8,
-              padding: "8px 18px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)",
-              background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.6)",
-              cursor: "pointer", fontSize: 13, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500,
-              transition: "all 0.2s ease",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#22d3a5"; e.currentTarget.style.color = "#22d3a5" }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.6)" }}
-            >
-              <X style={{ width: 14, height: 14 }} />
-              Cerrar
-            </button>
-          </div>
 
-          {/* Modal image */}
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px 80px", position: "relative", minHeight: 0 }} onClick={e => e.stopPropagation()}>
-            <img src={src} alt={item.title} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 8, animation: "fadeIn 0.2s ease both" }} />
+              {/* Hover overlay */}
+              <div
+                className="absolute inset-0 transition-opacity duration-400 pointer-events-none"
+                style={{
+                  opacity: isHovered ? 1 : 0,
+                  background: "linear-gradient(to top, rgba(0,8,16,0.95) 0%, rgba(0,8,16,0.4) 40%, transparent 100%)",
+                }}
+              />
 
-            {imgs.length > 1 && (<>
-              <button onClick={prevImg} style={{
-                position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)",
-                width: 52, height: 52, borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
-                background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)",
-                color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.2s ease",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#22d3a5"; e.currentTarget.style.color = "#22d3a5" }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "#fff" }}
-              ><ChevronLeft style={{ width: 22, height: 22 }} /></button>
+              {/* Expand icon */}
+              <div
+                className="absolute inset-0 flex items-center justify-center transition-all duration-300 z-10"
+                style={{ opacity: isHovered ? 1 : 0 }}
+              >
+                <div
+                  className="p-3 rounded-lg border border-[#00ffe1]/40 bg-black/60 backdrop-blur-sm"
+                  style={{ boxShadow: "0 0 20px rgba(0,255,225,0.3), inset 0 0 10px rgba(0,255,225,0.05)" }}
+                >
+                  <Maximize2 className="h-5 w-5 text-[#00ffe1]" />
+                </div>
+              </div>
 
-              <button onClick={nextImg} style={{
-                position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)",
-                width: 52, height: 52, borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
-                background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)",
-                color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.2s ease",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#22d3a5"; e.currentTarget.style.color = "#22d3a5" }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "#fff" }}
-              ><ChevronRight style={{ width: 22, height: 22 }} /></button>
-            </>)}
-          </div>
-
-          {/* Modal thumbnails */}
-          {imgs.length > 1 && (
-            <div style={{
-              display: "flex", justifyContent: "center", gap: 8, padding: "16px 24px",
-              borderTop: "1px solid rgba(255,255,255,0.06)", flexShrink: 0,
-            }} onClick={e => e.stopPropagation()}>
-              {imgs.map((img, i) => (
-                <button key={i} onClick={() => transition(() => setImgIdx(i))} style={{
-                  width: 80, height: 52, borderRadius: 6, overflow: "hidden",
-                  border: i === imgIdx ? "2px solid #22d3a5" : "2px solid rgba(255,255,255,0.1)",
-                  cursor: "pointer", opacity: i === imgIdx ? 1 : 0.4, transition: "all 0.2s ease",
-                  boxShadow: i === imgIdx ? "0 0 16px rgba(34,211,165,0.3)" : "none",
-                  background: "#0d0d14", flexShrink: 0, padding: 0,
-                }}>
-                  <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </button>
-              ))}
+              {imageCount > 1 && (
+                <div className="absolute bottom-3 right-3 z-20 px-2 py-0.5 rounded border border-[#b400ff]/30 bg-black/60 backdrop-blur-sm">
+                  <span className="text-[9px] font-mono text-[#b400ff]/90 tracking-widest">{imageCount}×VAR</span>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 gap-2 text-[#00ffe1]/20">
+              <ImageIcon className="h-10 w-10" />
+              <span className="text-[9px] font-mono tracking-[0.3em] uppercase">OFFLINE</span>
             </div>
           )}
         </div>
+
+        {/* Card content */}
+        <div className="px-4 py-3 relative z-10">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[8px] font-mono text-[#00ffe1]/30 tracking-[0.2em] uppercase">
+              ID::{String(item.id).toUpperCase().slice(0, 8)}
+            </span>
+            <span className="text-[8px] font-mono text-[#b400ff]/50 tracking-widest">●●●</span>
+          </div>
+          <h3 className="font-bold text-white/90 font-mono tracking-wider text-[11px] sm:text-xs mb-1">
+            {item.title}
+          </h3>
+          <p className="text-[10px] sm:text-[11px] text-white/35 leading-relaxed font-mono">
+            {item.description}
+          </p>
+          <div className="mt-3 h-px w-full bg-gradient-to-r from-transparent via-[#00ffe1]/20 to-transparent" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Modal ────────────────────────────────────────────────────────────
+
+function HoloModal({ item, onClose }: { item: MediaItem; onClose: () => void }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const allImages = item.images.length > 0 ? item.images : [item.thumbnail || ""]
+  const validImages = allImages.filter(Boolean)
+  const hasMultiple = validImages.length > 1
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") setCurrentIndex((p) => (p + 1) % validImages.length)
+      if (e.key === "ArrowLeft") setCurrentIndex((p) => (p - 1 + validImages.length) % validImages.length)
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [validImages.length, onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
+      style={{ background: "rgba(0,4,10,0.96)", backdropFilter: "blur(16px)" }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-5xl rounded-lg border border-[#00ffe1]/15 bg-[#04080f] overflow-hidden flex flex-col max-h-[93vh]"
+        style={{ animation: "revealUp 0.22s cubic-bezier(0.16,1,0.3,1) both", boxShadow: "0 0 60px rgba(0,255,225,0.06), 0 0 120px rgba(180,0,255,0.04)" }}
+      >
+        <ScanlineOverlay />
+        <CornerBrackets color="#00ffe1" size={18} />
+
+        {/* Top glow line */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#00ffe1]/60 to-transparent" style={{ boxShadow: "0 0 12px rgba(0,255,225,0.6)" }} />
+
+        {/* Header */}
+        <div className="flex-none flex items-center justify-between px-5 py-4 border-b border-[#00ffe1]/08">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-1 rounded border border-[#00ffe1]/20 bg-[#00ffe1]/05">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00ffe1] animate-pulse" style={{ boxShadow: "0 0 6px rgba(0,255,225,0.9)" }} />
+              <span className="text-[9px] font-mono text-[#00ffe1] tracking-[0.25em]">TRANSMITTING</span>
+            </div>
+            <div>
+              <p className="text-[9px] font-mono text-[#b400ff]/60 tracking-widest mb-0.5 uppercase">
+                Neural Render // {String(item.id).toUpperCase()}
+              </p>
+              <h3 className="text-sm sm:text-base font-mono font-bold text-white tracking-wider">
+                {item.title}
+              </h3>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-white/08 bg-white/03 hover:border-[#00ffe1]/30 hover:text-[#00ffe1] text-white/40 transition-all duration-200 font-mono text-[10px] tracking-widest"
+          >
+            <X className="h-4 w-4" />
+            <span className="hidden sm:inline">ESC</span>
+          </button>
+        </div>
+
+        {/* Image area */}
+        <div className="flex-1 relative min-h-0 flex items-center justify-center p-4 sm:p-6 bg-black/60">
+          {validImages.length > 0 ? (
+            <SmartImage
+              key={currentIndex}
+              src={validImages[currentIndex]}
+              alt={`${item.title} — ${currentIndex + 1}`}
+              className="max-w-full max-h-[58vh] sm:max-h-[66vh] object-contain rounded"
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-3 text-[#00ffe1]/20">
+              <ImageIcon className="h-14 w-14" />
+              <span className="font-mono text-xs tracking-widest">NO_SIGNAL</span>
+            </div>
+          )}
+
+          {hasMultiple && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); setCurrentIndex((p) => (p - 1 + validImages.length) % validImages.length) }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded border border-[#00ffe1]/15 bg-black/70 backdrop-blur-md hover:border-[#00ffe1]/50 hover:text-[#00ffe1] text-white/40 transition-all"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); setCurrentIndex((p) => (p + 1) % validImages.length) }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded border border-[#00ffe1]/15 bg-black/70 backdrop-blur-md hover:border-[#00ffe1]/50 hover:text-[#00ffe1] text-white/40 transition-all"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded border border-white/08 bg-black/70 backdrop-blur-sm">
+                <span className="text-[9px] font-mono text-[#00ffe1]/60 tracking-[0.2em]">
+                  {String(currentIndex + 1).padStart(2, "0")} / {String(validImages.length).padStart(2, "0")}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Thumbnails */}
+        {validImages.length > 1 && (
+          <div className="flex-none flex justify-center gap-2 p-3 sm:p-4 border-t border-[#00ffe1]/08 bg-black/40 overflow-x-auto">
+            {validImages.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className="relative flex-shrink-0 h-12 w-16 rounded overflow-hidden border transition-all duration-300"
+                style={{
+                  borderColor: idx === currentIndex ? "rgba(0,255,225,0.6)" : "rgba(255,255,255,0.06)",
+                  opacity: idx === currentIndex ? 1 : 0.35,
+                  boxShadow: idx === currentIndex ? "0 0 10px rgba(0,255,225,0.3)" : "none",
+                }}
+              >
+                <img src={img} alt={`Thumb ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                {idx === currentIndex && (
+                  <div className="absolute bottom-0 inset-x-0 h-0.5 bg-[#00ffe1]" style={{ boxShadow: "0 0 6px rgba(0,255,225,0.8)" }} />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="flex-none flex items-center justify-between px-4 py-2 border-t border-white/04 bg-black/60">
+          <span className="text-[8px] font-mono text-white/15 tracking-[0.2em]">NEURAL_CGI::RENDER_ENGINE_v4</span>
+          <span className="text-[8px] font-mono text-[#b400ff]/40 tracking-[0.15em]">RES:4K // FPS:60 // AI_DIFFUSION</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Tab Button ───────────────────────────────────────────────────────
+
+function TabButton({ cat, isActive, onClick }: { cat: Category; isActive: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="relative flex-shrink-0 flex items-center gap-2 px-4 sm:px-5 py-2.5 text-[9px] sm:text-[10px] font-mono tracking-[0.2em] uppercase transition-all duration-250"
+      style={{
+        color: isActive ? "#00ffe1" : "rgba(255,255,255,0.3)",
+        background: isActive ? "rgba(0,255,225,0.04)" : "transparent",
+        borderBottom: isActive ? "1px solid rgba(0,255,225,0.5)" : "1px solid transparent",
+      }}
+    >
+      {isActive && (
+        <span
+          className="w-1 h-1 rounded-full bg-[#00ffe1]"
+          style={{ boxShadow: "0 0 6px rgba(0,255,225,1)", animation: "pulse 1.5s infinite" }}
+        />
       )}
+      {cat.icon}
+      <span>{cat.name}</span>
+    </button>
+  )
+}
+
+// ─── Main Component ───────────────────────────────────────────────────
+
+export function GalleryCatalogoRopa() {
+  const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
+  const [activeTab, setActiveTab] = useState("catalogo-producto")
+  const [displayedTab, setDisplayedTab] = useState("catalogo-producto")
+  const [isChangingTab, setIsChangingTab] = useState(false)
+
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
+  const activeCategory = categories.find((c) => c.id === displayedTab)
+
+  const handleTabChange = (id: string) => {
+    if (id === activeTab) return
+    setIsChangingTab(true)
+    setTimeout(() => {
+      setActiveTab(id)
+      setDisplayedTab(id)
+      setIsChangingTab(false)
+    }, 180)
+  }
+
+  return (
+    <section id="catalogo-ropa" className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "#03050c" }}>
+      <style>{`
+        @keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
+        @keyframes revealUp { from { opacity: 0; transform: translateY(22px) scale(0.98) } to { opacity: 1; transform: translateY(0) scale(1) } }
+        @keyframes scanDown { 0% { transform: translateY(-100%) } 100% { transform: translateY(100vh) } }
+        @keyframes borderPulse { 0%, 100% { opacity: 0.15 } 50% { opacity: 0.4 } }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+      `}</style>
+
+      {/* Ambient background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "linear-gradient(rgba(0,255,225,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,225,0.5) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+        <div className="absolute top-0 left-1/3 w-[600px] h-[400px] rounded-full blur-[140px]" style={{ background: "rgba(0,200,180,0.04)" }} />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[400px] rounded-full blur-[120px]" style={{ background: "rgba(180,0,255,0.05)" }} />
+        <div className="absolute top-0 right-0 w-[1px] h-full opacity-10" style={{ background: "linear-gradient(to bottom, transparent, #00ffe1, transparent)", animation: "borderPulse 4s ease infinite" }} />
+      </div>
+
+      {/* Scan beam */}
+      <div className="absolute left-0 right-0 h-[1px] pointer-events-none z-10 opacity-20" style={{ background: "linear-gradient(90deg, transparent, #00ffe1, transparent)", animation: "scanDown 8s linear infinite" }} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
+        <div className="text-center mb-10 sm:mb-14" style={{ animation: "revealUp 0.7s cubic-bezier(0.16,1,0.3,1) both" }}>
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded border border-[#00ffe1]/20 bg-[#00ffe1]/04 mb-6" style={{ boxShadow: "0 0 20px rgba(0,255,225,0.06)" }}>
+            <Zap className="h-3 w-3 text-[#00ffe1]" />
+            <span className="text-[9px] font-mono text-[#00ffe1] tracking-[0.35em] uppercase">SYSTEM::VISUAL_AI // MÓDULO_ACTIVO</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00ffe1] animate-pulse" style={{ boxShadow: "0 0 8px rgba(0,255,225,0.9)" }} />
+          </div>
+
+          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-4 leading-none tracking-tight" style={{ fontFamily: "'Rajdhani', sans-serif", letterSpacing: "-0.02em" }}>
+            <GlitchText text="IMÁGENES" className="text-white" />
+            <br />
+            <span className="text-transparent" style={{ WebkitTextStroke: "1px rgba(0,255,225,0.5)" }}>CON </span>
+            <span className="text-transparent" style={{ background: "linear-gradient(90deg, #00ffe1 0%, #b400ff 60%, #00ffe1 100%)", backgroundClip: "text", WebkitBackgroundClip: "text" }}>
+              IA GENERATIVA
+            </span>
+          </h2>
+
+          <div className="inline-flex items-start gap-2 mt-2">
+            <span className="text-[#00ffe1]/40 font-mono text-xs mt-0.5">$</span>
+            <p className="text-white/35 max-w-xl text-[11px] sm:text-xs leading-relaxed font-mono text-left">
+              Fotografía comercial, modelaje y CGI generativo. Elimina los costos de un estudio tradicional — crea campañas hiperrealistas impulsadas por Inteligencia Artificial.
+            </p>
+          </div>
+        </div>
+
+        {/* Tab bar */}
+        <div className="flex border-b border-[#00ffe1]/10 mb-3 overflow-x-auto" style={{ animation: "revealUp 0.5s ease both 0.1s" }}>
+          <div className="flex-none flex items-center pr-4 border-r border-[#00ffe1]/08 mr-2">
+            <span className="text-[8px] font-mono text-[#00ffe1]/30 tracking-[0.25em] whitespace-nowrap">SYS:GALLERY</span>
+          </div>
+          {categories.map((cat) => (
+            <TabButton key={cat.id} cat={cat} isActive={activeTab === cat.id} onClick={() => handleTabChange(cat.id)} />
+          ))}
+        </div>
+
+        {/* Category description */}
+        {activeCategory && (
+          <p className="text-[9px] sm:text-[10px] font-mono text-[#00ffe1]/25 tracking-[0.2em] uppercase mb-8" style={{ animation: "revealUp 0.3s ease both" }}>
+            <span className="text-[#b400ff]/50 mr-2">//</span>
+            {activeCategory.description}
+          </p>
+        )}
+
+        {/* Masonry Grid */}
+        <div style={{ opacity: isChangingTab ? 0 : 1, transition: "opacity 0.18s ease" }}>
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-5">
+            {activeCategory?.items.map((item, index) => (
+              <HoloCard key={`${displayedTab}-${item.id}`} item={item} index={index} onClick={() => setSelectedItem(item)} />
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-14 sm:mt-20 text-center" style={{ animation: "revealUp 0.6s ease both 0.3s" }}>
+          <p className="text-[9px] font-mono text-white/20 tracking-[0.3em] uppercase mb-4">INICIAR_PROTOCOLO::CAMPAÑA_IA</p>
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+            className="group relative inline-flex items-center gap-3 px-8 sm:px-10 py-4 font-mono text-[11px] sm:text-xs tracking-[0.25em] uppercase text-[#00ffe1] overflow-hidden rounded transition-all duration-300"
+            style={{ border: "1px solid rgba(0,255,225,0.3)", background: "rgba(0,255,225,0.03)", boxShadow: "0 0 20px rgba(0,255,225,0.08), inset 0 0 20px rgba(0,255,225,0.02)" }}
+            onMouseEnter={e => { const el = e.currentTarget; el.style.boxShadow = "0 0 40px rgba(0,255,225,0.2), inset 0 0 30px rgba(0,255,225,0.05)"; el.style.borderColor = "rgba(0,255,225,0.6)" }}
+            onMouseLeave={e => { const el = e.currentTarget; el.style.boxShadow = "0 0 20px rgba(0,255,225,0.08), inset 0 0 20px rgba(0,255,225,0.02)"; el.style.borderColor = "rgba(0,255,225,0.3)" }}
+          >
+            <span className="absolute inset-0 translate-x-[-110%] group-hover:translate-x-[110%] transition-transform duration-700 pointer-events-none" style={{ background: "linear-gradient(90deg, transparent, rgba(0,255,225,0.08), transparent)" }} />
+            <CornerBrackets color="#00ffe1" size={8} />
+            <Zap className="relative z-10 h-4 w-4 group-hover:animate-pulse" />
+            <span className="relative z-10 font-bold">CREAR MI CAMPAÑA IA</span>
+            <span className="relative z-10 text-[#00ffe1]/40">▶</span>
+          </a>
+          <p className="mt-4 text-[8px] font-mono text-white/12 tracking-[0.2em]">
+            CONEXIÓN SEGURA // WhatsApp::{WHATSAPP_NUMBER} // LATENCIA:~0ms
+          </p>
+        </div>
+      </div>
+
+      {selectedItem && <HoloModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
     </section>
   )
 }

@@ -106,6 +106,33 @@ function SpotlightCard({
   )
 }
 
+/* ─── Coming Soon Badge ───────────────────────────────────────────── */
+
+function ComingSoonOverlay() {
+  return (
+    <div
+      className="absolute inset-0 rounded-xl z-20 flex flex-col items-center justify-center gap-2"
+      style={{ background: "rgba(7,8,13,0.82)", backdropFilter: "blur(2px)" }}
+    >
+      <div
+        className="flex items-center gap-2 px-3 py-1.5 rounded"
+        style={{
+          border: "1px solid rgba(0,255,225,0.2)",
+          background: "rgba(0,255,225,0.05)",
+        }}
+      >
+        <span
+          className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"
+          style={{ boxShadow: "0 0 6px rgba(0,255,225,0.8)" }}
+        />
+        <span className="text-[10px] font-mono text-cyan-400/80 tracking-[0.2em] uppercase">
+          Próximamente
+        </span>
+      </div>
+    </div>
+  )
+}
+
 /* ─── Main Component ──────────────────────────────────────────────── */
 
 export function Blog() {
@@ -174,9 +201,13 @@ export function Blog() {
                 transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <SpotlightCard>
-                  <div className="relative h-full rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-6 group cursor-pointer hover:border-cyan-500/15 transition-all duration-300">
+                  <div className="relative h-full rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 sm:p-6 group transition-all duration-300 overflow-hidden">
+
+                    {/* ── COMING SOON OVERLAY ── */}
+                    <ComingSoonOverlay />
+
                     {/* Top glow */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded border border-cyan-500/15 bg-cyan-500/[0.05] text-cyan-400/60 font-mono tracking-wider uppercase">
@@ -187,11 +218,11 @@ export function Blog() {
                       </span>
                     </div>
 
-                    <div className="w-9 h-9 rounded-lg border border-white/[0.06] bg-white/[0.03] flex items-center justify-center mb-4 group-hover:border-cyan-500/15 transition-colors">
-                      <article.icon className="h-4 w-4 text-white/20 group-hover:text-cyan-400/50 transition-colors" />
+                    <div className="w-9 h-9 rounded-lg border border-white/[0.06] bg-white/[0.03] flex items-center justify-center mb-4">
+                      <article.icon className="h-4 w-4 text-white/20" />
                     </div>
 
-                    <h3 className="text-xs sm:text-sm font-bold text-white/70 group-hover:text-white/90 transition-colors font-mono mb-2 line-clamp-2">
+                    <h3 className="text-xs sm:text-sm font-bold text-white/70 font-mono mb-2 line-clamp-2">
                       {article.title}
                     </h3>
 
@@ -199,14 +230,13 @@ export function Blog() {
                       {article.description}
                     </p>
 
-                    <div className="flex items-center gap-1.5 text-cyan-400/50 group-hover:text-cyan-400/80 transition-colors">
+                    <div className="flex items-center gap-1.5 text-cyan-400/50">
                       <span className="text-[10px] sm:text-xs font-mono tracking-wider">Leer artículo</span>
-                      <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                      <ArrowRight className="h-3 w-3" />
                     </div>
 
-                    {/* Corner accents */}
-                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-500/0 group-hover:border-cyan-500/15 transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-cyan-500/0 group-hover:border-cyan-500/15 transition-colors duration-500" />
+                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-500/10" />
+                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-cyan-500/10" />
                   </div>
                 </SpotlightCard>
               </motion.div>
@@ -235,14 +265,18 @@ export function Blog() {
                 transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <SpotlightCard>
-                  <div className="relative flex items-start gap-4 p-4 sm:p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] group cursor-pointer hover:border-cyan-500/15 transition-all duration-300">
-                    <div className="w-10 h-10 rounded-lg border border-white/[0.06] bg-white/[0.03] flex items-center justify-center flex-shrink-0 group-hover:border-cyan-500/15 transition-colors">
-                      <resource.icon className="h-4 w-4 text-white/20 group-hover:text-cyan-400/50 transition-colors" />
+                  <div className="relative flex items-start gap-4 p-4 sm:p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] transition-all duration-300 overflow-hidden">
+
+                    {/* ── COMING SOON OVERLAY ── */}
+                    <ComingSoonOverlay />
+
+                    <div className="w-10 h-10 rounded-lg border border-white/[0.06] bg-white/[0.03] flex items-center justify-center flex-shrink-0">
+                      <resource.icon className="h-4 w-4 text-white/20" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="text-xs sm:text-sm font-bold text-white/70 group-hover:text-white/90 transition-colors font-mono truncate">
+                        <h4 className="text-xs sm:text-sm font-bold text-white/70 font-mono truncate">
                           {resource.title}
                         </h4>
                         <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded border border-white/[0.08] bg-white/[0.03] text-white/25 font-mono tracking-wider uppercase flex-shrink-0">
@@ -254,14 +288,13 @@ export function Blog() {
                         {resource.description}
                       </p>
 
-                      <div className="flex items-center gap-1.5 text-cyan-400/50 group-hover:text-cyan-400/80 transition-colors">
+                      <div className="flex items-center gap-1.5 text-cyan-400/50">
                         <Download className="h-3 w-3" />
                         <span className="text-[10px] sm:text-xs font-mono tracking-wider">Descargar</span>
                       </div>
                     </div>
 
-                    {/* Corner accent */}
-                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-500/0 group-hover:border-cyan-500/15 transition-colors duration-500" />
+                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-500/10" />
                   </div>
                 </SpotlightCard>
               </motion.div>

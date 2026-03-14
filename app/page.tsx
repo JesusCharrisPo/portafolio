@@ -8,7 +8,7 @@ import { AIVideoShowcase } from "@/components/ai-video-showcase"
 import { GalleryCatalogoRopa } from "@/components/gallery-catalogo-ropa"
 import { Portfolio } from "@/components/portfolio"
 import { Blog } from "@/components/blog"
-import { ContactForm } from "@/components/ContactForm"
+import ContactForm from "@/components/ContactForm"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 

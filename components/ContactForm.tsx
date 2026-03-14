@@ -292,7 +292,7 @@ function SuccessScreen({ onReset }: { onReset: () => void }) {
 
 // ─── Main Component ───────────────────────────────────────────────────
 
-export function ContactForm() {
+export default function ContactForm() {
   const [fields, setFields] = useState<Field>({ name: "", email: "", phone: "", subject: "", message: "" })
   const [state,  setState]  = useState<FormState>("idle")
   const [error,  setError]  = useState("")

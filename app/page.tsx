@@ -28,6 +28,10 @@ export default function Page() {
       <GalleryCatalogoRopa />
       <Portfolio />
       <Blog />
+
+      {/* FORMULARIO */}
+      <ContactForm />
+
       <Contact />
       <Footer />
     </main>

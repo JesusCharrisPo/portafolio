@@ -250,14 +250,14 @@ export function GalleryDesarrolloWeb() {
 
             {/* ── FEATURED (LEFT — big) ── */}
             <div className="relative lg:flex-[3] rounded-2xl overflow-hidden cursor-pointer group"
-              style={{ minHeight: "520px", animation: vis ? "featured-in .6s ease" : "none" }}
+              style={{ aspectRatio: "4/3", minHeight: "320px", maxHeight: "620px", animation: vis ? "featured-in .6s ease" : "none" }}
               onClick={() => featured.images.length > 0 && setModal(featured)}>
 
               {/* Image */}
               {featured.images[0] ? (
                 <img key={featured.id} src={featured.images[0]} alt={featured.title}
-                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                  style={{ animation: "featured-in .5s ease" }} />
+                  className="absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-105"
+                  style={{ objectFit: "cover", objectPosition: "center 20%", animation: "featured-in .5s ease" }} />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: cat.glow+"0.06)" }}>
                   <div className="text-center space-y-3">

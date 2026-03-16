@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ArrowRight, Sparkles, Code2, Film, Zap, Megaphone, Target, BarChart2, TrendingUp, Lightbulb, Download, CheckCircle2 } from "lucide-react"
+import { ArrowRight, Sparkles, Code2, Film, Zap, Megaphone, Target, BarChart2, TrendingUp, Lightbulb, Download } from "lucide-react"
 
 const WHATSAPP_URL = "https://wa.me/573043819731?text=%F0%9F%9A%80%20%C2%A1Hola%20Jesus!%20Vi%20tu%20portafolio%20y%20quiero%20una%20consulta%20gratuita"
 
@@ -371,15 +371,58 @@ export function Hero() {
                 {/* Status pills */}
                 <div style={s(500)} className="flex flex-wrap gap-2 mt-8 justify-center xl:justify-start">
                   {[
-                    { icon: CheckCircle2, label: "Proyectos remotos globales",   color: "text-emerald-400", dot: "bg-emerald-400" },
-                    { icon: Zap,          label: "Respuesta < 24h",              color: "text-cyan-400",    dot: "bg-cyan-400"    },
-                    { icon: Sparkles,     label: "Consulta inicial gratuita",    color: "text-violet-400",  dot: "bg-violet-400"  },
+                    { label: "Proyectos remotos globales", dot: "bg-emerald-400", color: "text-emerald-400" },
+                    { label: "Respuesta < 24h",            dot: "bg-cyan-400",    color: "text-cyan-400"    },
+                    { label: "Consulta inicial gratuita",  dot: "bg-violet-400",  color: "text-violet-400"  },
                   ].map((p, i) => (
                     <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02]">
                       <span className={`w-1 h-1 rounded-full ${p.dot}`} />
                       <span className={`text-[9px] font-mono ${p.color} tracking-wide`}>{p.label}</span>
                     </div>
                   ))}
+                </div>
+
+                {/* ── Skills grid ── */}
+                <div style={s(600)} className="mt-8">
+                  <div className="flex items-center gap-3 justify-center xl:justify-start mb-3">
+                    <div className="h-px w-5 bg-gradient-to-r from-violet-500/60 to-transparent" />
+                    <span className="text-[8px] font-mono text-white/20 tracking-[.2em] uppercase">Especialidades</span>
+                    <div className="h-px flex-1 bg-gradient-to-r from-white/[0.04] to-transparent" />
+                  </div>
+                  <div className="grid grid-cols-4 gap-1.5 max-w-sm mx-auto xl:mx-0">
+                    {[
+                      { icon: Megaphone,  label: "Marketing Digital",       color: "#a78bfa", border: "rgba(167,139,250,.2)"  },
+                      { icon: Target,     label: "Tráfico y Conversión",    color: "#e879f9", border: "rgba(232,121,249,.2)"  },
+                      { icon: Code2,      label: "Desarrollo Web",          color: "#22d3ee", border: "rgba(34,211,238,.2)"   },
+                      { icon: Film,       label: "Producción Audiovisual",  color: "#f472b6", border: "rgba(244,114,182,.2)"  },
+                      { icon: Sparkles,   label: "Inteligencia Artificial", color: "#fbbf24", border: "rgba(251,191,36,.2)"   },
+                      { icon: BarChart2,  label: "Analytics y Métricas",   color: "#34d399", border: "rgba(52,211,153,.2)"   },
+                      { icon: TrendingUp, label: "Growth Hacking",          color: "#38bdf8", border: "rgba(56,189,248,.2)"   },
+                      { icon: Lightbulb,  label: "Estrategia de Negocio",  color: "#fb7185", border: "rgba(251,113,133,.2)"  },
+                    ].map((skill, i) => {
+                      const Icon = skill.icon
+                      return (
+                        <div key={i}
+                          title={skill.label}
+                          className="group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl cursor-default overflow-hidden transition-all duration-300 hover:scale-105"
+                          style={{ border: `1px solid ${skill.border}`, background: skill.color + "0d" }}
+                        >
+                          {/* Hover glow */}
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
+                            style={{ background: `radial-gradient(circle at 50% 50%, ${skill.color}20, transparent 70%)` }} />
+                          <Icon className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:scale-110"
+                            style={{ color: skill.color }} />
+                          <span className="relative z-10 text-[7px] font-mono text-center leading-tight transition-colors duration-300"
+                            style={{ color: skill.color + "99" }}>
+                            {skill.label.split(" ")[0]}
+                          </span>
+                          {/* Corner scan */}
+                          <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 opacity-40"
+                            style={{ borderTop: `1px solid ${skill.color}`, borderRight: `1px solid ${skill.color}` }} />
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
 

@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useRef, MouseEvent } from "react"
+import { useState, useRef, useEffect, MouseEvent } from "react"
 import {
   Play,
-  ImageIcon,
   Video,
   Sparkles,
   MessageCircle,
@@ -11,9 +10,11 @@ import {
   Film,
   Smartphone,
   Monitor,
-  Info,
-  ChevronDown,
-  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Volume2,
+  VolumeX,
+  Maximize2,
 } from "lucide-react"
 
 type MediaItem = {
@@ -97,7 +98,7 @@ const categories: MainCategory[] = [
         items: [
           { id: 1, title: "Cepillo Dispensador para Mascotas | CGI y Simulación de Fluidos(IA)", description: "Visualización comercial generada con Inteligencia Artificial para un innovador cepillo de baño con dispensador de jabón para perros. Integración de simulaciones hiperrealistas de agua y dinámicas de fluidos para destacar la funcionalidad del producto, logrando un acabado de nivel televisivo sin necesidad de rodaje físico.", type: "video", url: "/cepillo .mp4", thumbnail: "/cepillo .mp4", duration: "0:15" },
           { id: 2, title: "Avatares Hiperrealistas y Efectos Visuales con (IA)", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "/1002.mp4", thumbnail: "/1002.mp4", duration: "0:08" },
-          { id: 3, title: "Avatares Hiperrealistas y Efectos Visuales con (IA)", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "/1002.mp4", thumbnail: "/1002.mp4", duration: "0:08" },
+          { id: 3, title: "Producto 3D | Render Fotorrealista (IA)", description: "Visualización de producto en 3D generada por IA con iluminación de estudio hiperrealista.", type: "video", url: "", thumbnail: "", duration: "0:10" },
         ],
       },
       {
@@ -107,8 +108,8 @@ const categories: MainCategory[] = [
         aspect: "horizontal",
         items: [
           { id: 1, title: "Visualizer Musical | Animación Generativa (IA)", description: "Dirección de arte y animación mediante Inteligencia Artificial para la industria musical (formato Visualizer / Spotify Canvas). Transformación de un concepto estático en una escena de suspenso inmersiva con estética 'retro-slasher' e iluminación cinematográfica, ideal para elevar el lanzamiento de sencillos y retener la atención en plataformas de streaming.", type: "video", url: "/0930.mp4", thumbnail: "/0930.mp4", duration: "0:15" },
-          { id: 2, title: "Videoclip Musical Urbano | Cinematografía Generativa (IA)", description: "Dirección y desarrollo de un videoclip oficial completo para el género Rap/Hip-Hop, renderizado 100% mediante Inteligencia Artificial. Creación de una atmósfera hiperrealista y cruda con iluminación nocturna, efectos atmosféricos (humo, luces de ciudad) y una narrativa visual coherente (storytelling). Esta pieza demuestra la capacidad de sustituir rodajes de alto presupuesto, entregando un producto cinematográfico que conecta perfectamente con la estética de la calle.", type: "video", url: "", thumbnail: "", duration: "" },
-          { id: 3, title: "Animación IA", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas e integración de efectos visuales (trazos de luz) para ilustrar conceptualmente los beneficios en la piel.", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 2, title: "Videoclip Musical Urbano | Cinematografía Generativa (IA)", description: "Dirección y desarrollo de un videoclip oficial completo para el género Rap/Hip-Hop, renderizado 100% mediante Inteligencia Artificial. Creación de una atmósfera hiperrealista y cruda con iluminación nocturna, efectos atmosféricos (humo, luces de ciudad) y una narrativa visual coherente (storytelling).", type: "video", url: "", thumbnail: "", duration: "" },
+          { id: 3, title: "Animación IA | Brand Film", description: "Campaña de belleza impulsada al 100% por Inteligencia Artificial. Generación de modelos digitales con texturas de piel fotorrealistas.", type: "video", url: "", thumbnail: "", duration: "" },
         ],
       },
     ],
@@ -119,207 +120,349 @@ const WHATSAPP_NUMBER = "573043819731"
 const WHATSAPP_MESSAGE =
   "🎬 ¡Hola Jesus! 👋 Me interesa tu servicio de *Producción Audiovisual* 🎥✨ Quiero crear contenido profesional para mi marca. ¿Podemos hablar sobre mi proyecto? 🚀📞"
 
-// ─── Media Card with Spotlight (Limpia sin Framer Motion) ─────────────
+// ── Thumbnail Card ────────────────────────────────────────────────────
 
-function MediaCard({
+function ThumbnailCard({
   item,
   aspect,
+  isActive,
+  index,
   onClick,
 }: {
   item: MediaItem
-  index: number
   aspect: "vertical" | "horizontal"
+  isActive: boolean
+  index: number
   onClick: () => void
 }) {
-  const cardRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [spotlightPos, setSpotlightPos] = useState({ x: 0, y: 0 })
-  const [isHovered, setIsHovered] = useState(false)
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    setSpotlightPos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
-  }
-
-  const handleMouseEnter = () => {
-    setIsHovered(true)
-    // Seek to first frame to ensure thumbnail is visible
+  useEffect(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0.1
     }
-  }
+  }, [])
 
-  const hasContent = item.thumbnail || item.url
+  const hasContent = item.url || item.thumbnail
   const aspectClass = aspect === "vertical" ? "aspect-[9/16]" : "aspect-video"
 
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={() => setIsHovered(false)}
+    <button
       onClick={onClick}
-      className="relative group cursor-pointer transition-transform duration-300 hover:-translate-y-1"
+      className={`group relative w-full rounded-lg overflow-hidden transition-all duration-300 text-left ${
+        isActive
+          ? "ring-2 ring-purple-500 ring-offset-2 ring-offset-[#07080d] scale-[0.98]"
+          : "hover:ring-1 hover:ring-purple-500/40 hover:scale-[0.99]"
+      }`}
     >
-      {/* Spotlight outer glow */}
-      <div
-        className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{
-          background: isHovered
-            ? `radial-gradient(200px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.2), transparent 60%)`
-            : "none",
-        }}
-      />
-
-      <div className="relative rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden transition-all duration-500 group-hover:border-purple-500/20">
-        {/* Inner spotlight */}
-        {isHovered && (
-          <div
-            className="absolute inset-0 pointer-events-none z-10"
-            style={{
-              background: `radial-gradient(150px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(168,85,247,0.05), transparent 60%)`,
-            }}
-          />
+      <div className={`${aspectClass} relative bg-[#0a0b10]`}>
+        {hasContent ? (
+          <>
+            <video
+              ref={videoRef}
+              src={item.url || item.thumbnail}
+              muted
+              playsInline
+              preload="metadata"
+              onLoadedMetadata={(e) => {
+                (e.currentTarget as HTMLVideoElement).currentTime = 0.1
+              }}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            {isActive && (
+              <div className="absolute inset-0 bg-purple-500/10" />
+            )}
+            <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isActive ? "bg-purple-500/80" : "bg-black/50 backdrop-blur-sm border border-white/20"}`}>
+                <Play className="h-3.5 w-3.5 text-white ml-0.5" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-[#0d0e16]">
+            <div className="text-center space-y-1.5">
+              <Video className="h-4 w-4 text-white/15 mx-auto" />
+              <span className="text-[9px] font-mono text-white/15 tracking-widest uppercase block">Próximamente</span>
+            </div>
+          </div>
         )}
 
-        {/* Thumbnail area */}
-        <div className={`${aspectClass} relative bg-[#0a0b10] flex items-center justify-center overflow-hidden`}>
-          {hasContent ? (
-            <>
-              {/* ── VIDEO THUMBNAIL (reemplaza <img>) ── */}
+        {/* Duration */}
+        {item.duration && (
+          <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-sm">
+            <span className="text-[9px] font-mono text-white/60">{item.duration}</span>
+          </div>
+        )}
+
+        {/* Index number */}
+        <div className={`absolute top-1.5 left-1.5 w-5 h-5 rounded flex items-center justify-center text-[9px] font-mono font-bold transition-colors ${isActive ? "bg-purple-500 text-white" : "bg-black/60 text-white/40"}`}>
+          {String(index + 1).padStart(2, "0")}
+        </div>
+      </div>
+
+      {/* Title below thumbnail */}
+      <div className="p-2 bg-[#0a0b10]/80">
+        <p className={`text-[10px] font-mono truncate transition-colors ${isActive ? "text-purple-400" : "text-white/40 group-hover:text-white/60"}`}>
+          {item.title.split("|")[0].trim()}
+        </p>
+      </div>
+    </button>
+  )
+}
+
+// ── Main Feature Player ───────────────────────────────────────────────
+
+function FeaturePlayer({
+  item,
+  aspect,
+  onNext,
+  onPrev,
+  hasNext,
+  hasPrev,
+}: {
+  item: MediaItem
+  aspect: "vertical" | "horizontal"
+  onNext: () => void
+  onPrev: () => void
+  hasNext: boolean
+  hasPrev: boolean
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [playing, setPlaying] = useState(false)
+  const [muted, setMuted] = useState(false)
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    setPlaying(false)
+    setProgress(0)
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }, [item])
+
+  const togglePlay = () => {
+    if (!videoRef.current || !item.url) return
+    if (playing) {
+      videoRef.current.pause()
+      setPlaying(false)
+    } else {
+      videoRef.current.play()
+      setPlaying(true)
+    }
+  }
+
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return
+    const p = (videoRef.current.currentTime / videoRef.current.duration) * 100
+    setProgress(isNaN(p) ? 0 : p)
+  }
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!videoRef.current) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ratio = (e.clientX - rect.left) / rect.width
+    videoRef.current.currentTime = ratio * videoRef.current.duration
+  }
+
+  const hasContent = !!item.url
+
+  return (
+    <div className="relative w-full h-full flex flex-col">
+      {/* Video wrapper — centers a vertical 9:16 on desktop */}
+      <div className="relative flex-1 flex items-center justify-center bg-black rounded-xl overflow-hidden group">
+        {hasContent ? (
+          <>
+            <video
+              ref={videoRef}
+              key={item.url}
+              src={item.url}
+              muted={muted}
+              playsInline
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={() => setPlaying(false)}
+              className={`h-full ${aspect === "vertical" ? "w-auto max-w-full" : "w-full"} object-contain`}
+            />
+
+            {/* Subtle blur bg for vertical vids on desktop */}
+            {aspect === "vertical" && (
               <video
-                ref={videoRef}
-                src={item.url || item.thumbnail}
+                src={item.url}
                 muted
                 playsInline
-                preload="metadata"
-                // Seek slightly past 0 so browsers render the first frame
-                onLoadedMetadata={(e) => {
-                  (e.currentTarget as HTMLVideoElement).currentTime = 0.1
+                className="absolute inset-0 w-full h-full object-cover opacity-20 blur-2xl scale-110 pointer-events-none"
+                ref={(el) => {
+                  if (el) {
+                    el.currentTime = videoRef.current?.currentTime || 0
+                    if (playing) el.play().catch(() => {})
+                    else el.pause()
+                  }
                 }}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#07080d] via-transparent to-transparent opacity-60" />
+            )}
 
-              {/* Play button */}
-              {item.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-purple-500/30 bg-purple-500/[0.1] backdrop-blur-sm flex items-center justify-center group-hover:border-purple-400/50 group-hover:bg-purple-500/[0.2] group-hover:scale-110 transition-all duration-300">
-                    <Play className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400 ml-0.5 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                  </div>
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+            {/* Center play / pause on click */}
+            <button
+              onClick={togglePlay}
+              className="absolute inset-0 flex items-center justify-center z-10"
+            >
+              {!playing && (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/30 bg-black/40 backdrop-blur-md flex items-center justify-center hover:bg-purple-500/30 hover:border-purple-400/60 transition-all duration-300 hover:scale-110">
+                  <Play className="h-7 w-7 sm:h-8 sm:h-8 text-white ml-1" />
                 </div>
               )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-2.5">
-              <div className="w-10 h-10 rounded-lg border border-white/[0.06] bg-white/[0.02] flex items-center justify-center">
-                <Video className="h-5 w-5 text-white/20" />
-              </div>
-              <span className="text-[10px] font-mono text-white/20 tracking-widest uppercase">
-                Próximamente
-              </span>
+            </button>
+
+            {/* Controls bar */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 px-4 pb-4 pt-12 bg-gradient-to-t from-black/80 to-transparent">
+              {/* Progress bar */}
               <div
-                className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px)",
-                }}
-              />
-            </div>
-          )}
+                className="w-full h-1 bg-white/20 rounded-full cursor-pointer mb-3 hover:h-1.5 transition-all"
+                onClick={handleSeek}
+              >
+                <div
+                  className="h-full bg-gradient-to-r from-purple-500 to-cyan-400 rounded-full transition-all duration-100"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
 
-          {/* Duration badge */}
-          {item.duration && (
-            <div className="absolute bottom-2 right-2 z-10 px-2 py-0.5 rounded-md border border-white/[0.1] bg-black/60 backdrop-blur-sm">
-              <span className="text-[10px] font-mono text-white/60 tracking-wider">
-                {item.duration}
-              </span>
-            </div>
-          )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={togglePlay}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-purple-500/30 border border-white/10 hover:border-purple-400/40 transition-all"
+                  >
+                    {playing ? (
+                      <span className="flex gap-0.5 px-0.5">
+                        <span className="w-0.5 h-3 bg-white rounded-full" />
+                        <span className="w-0.5 h-3 bg-white rounded-full" />
+                      </span>
+                    ) : (
+                      <Play className="h-3 w-3 text-white ml-0.5" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setMuted(!muted)}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 transition-all"
+                  >
+                    {muted ? (
+                      <VolumeX className="h-3 w-3 text-white/60" />
+                    ) : (
+                      <Volume2 className="h-3 w-3 text-white/60" />
+                    )}
+                  </button>
+                </div>
 
-          {/* Format badge */}
-          <div className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-md border border-purple-500/20 bg-black/40 backdrop-blur-sm">
-            <span className="text-[9px] font-mono text-purple-400/70 tracking-wider uppercase">
-              {aspect === "vertical" ? "9:16" : "16:9"}
-            </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={onPrev}
+                    disabled={!hasPrev}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-purple-500/20 border border-white/10 disabled:opacity-30 transition-all"
+                  >
+                    <ChevronLeft className="h-3 w-3 text-white" />
+                  </button>
+                  <button
+                    onClick={onNext}
+                    disabled={!hasNext}
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-purple-500/20 border border-white/10 disabled:opacity-30 transition-all"
+                  >
+                    <ChevronRight className="h-3 w-3 text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Coming soon state */
+          <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-2xl border border-white/10 bg-white/[0.03] flex items-center justify-center">
+                <Video className="h-7 w-7 text-white/15" />
+              </div>
+              <div className="absolute inset-0 rounded-2xl border border-purple-500/20 animate-ping opacity-30" />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-xs font-mono text-white/20 tracking-widest uppercase">Próximamente</p>
+              <p className="text-[10px] font-mono text-white/10">Contenido en producción</p>
+            </div>
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Info */}
-        <div className="p-3 space-y-1">
-          <h3 className="text-xs sm:text-sm font-semibold text-white/80 font-mono truncate group-hover:text-white transition-colors">
-            {item.title}
-          </h3>
-          <p className="text-[10px] sm:text-xs text-white/30 truncate">{item.description}</p>
+      {/* Info below player */}
+      <div className="mt-3 sm:mt-4 space-y-1.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm sm:text-base font-bold text-white font-mono leading-tight truncate">
+              {item.title}
+            </h3>
+          </div>
+          {item.duration && (
+            <span className="shrink-0 text-[10px] font-mono text-purple-400/70 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
+              {item.duration}
+            </span>
+          )}
         </div>
-
-        {/* Corner accents */}
-        <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l border-purple-500/0 group-hover:border-purple-500/20 transition-colors duration-500" />
-        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r border-purple-500/0 group-hover:border-purple-500/20 transition-colors duration-500" />
+        <p className="text-xs text-white/30 leading-relaxed line-clamp-2">
+          {item.description}
+        </p>
       </div>
     </div>
   )
 }
 
-// ─── Tab Button (Ligero) ──────────────────────────────────────────────
+// ── Tab Button ────────────────────────────────────────────────────────
 
 function TabButton({
   active,
   onClick,
   icon: Icon,
   label,
-  tooltip,
 }: {
   active: boolean
   onClick: () => void
   icon: any
   label: string
-  tooltip?: string
 }) {
   return (
-    <div className="relative group/tab">
-      <button
-        onClick={onClick}
-        className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 ${
-          active
-            ? "text-purple-400 border border-purple-500/30 bg-purple-500/[0.08]"
-            : "text-white/30 border border-white/[0.06] bg-white/[0.02] hover:text-white/50 hover:border-white/[0.1]"
-        }`}
-      >
-        <Icon className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${active ? "drop-shadow-[0_0_6px_rgba(168,85,247,0.3)]" : ""}`} />
-        {label}
-      </button>
-      {/* Tooltip */}
-      {tooltip && (
-        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black/80 border border-white/10 text-[9px] font-mono text-white/50 whitespace-nowrap opacity-0 group-hover/tab:opacity-100 transition-opacity duration-300 pointer-events-none hidden sm:block z-20">
-          {tooltip}
-        </div>
-      )}
-    </div>
+    <button
+      onClick={onClick}
+      className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 ${
+        active
+          ? "text-white bg-gradient-to-r from-purple-600/80 to-purple-500/60 border border-purple-400/40 shadow-[0_0_20px_rgba(168,85,247,0.2)]"
+          : "text-white/30 border border-white/[0.06] bg-white/[0.02] hover:text-white/50 hover:border-white/[0.1]"
+      }`}
+    >
+      <Icon className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${active ? "text-purple-200" : ""}`} />
+      {label}
+    </button>
   )
 }
 
-// ─── Main Component (Ligero) ──────────────────────────────────────────
+// ── Gallery Audiovisual ───────────────────────────────────────────────
 
 export function GalleryAudiovisual() {
-  const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null)
   const [activeMainTab, setActiveMainTab] = useState("sin-ia")
   const [activeSubTab, setActiveSubTab] = useState("vertical-sin-ia")
+  const [activeIndex, setActiveIndex] = useState(0)
   const [showAll, setShowAll] = useState(false)
 
   const currentCategory = categories.find((c) => c.id === activeMainTab)
   const currentSubcategory = currentCategory?.subcategories.find((s) => s.id === activeSubTab)
-
   const allItems = currentSubcategory?.items || []
   const visibleItems = showAll ? allItems : allItems.slice(0, VISIBLE_COUNT)
-  const hasMore = allItems.length > VISIBLE_COUNT
+  const activeItem = allItems[activeIndex] || allItems[0]
+  const aspect = currentSubcategory?.aspect || "vertical"
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
   const handleMainTabChange = (id: string) => {
     setActiveMainTab(id)
+    setActiveIndex(0)
     setShowAll(false)
     const cat = categories.find((c) => c.id === id)
     if (cat) setActiveSubTab(cat.subcategories[0].id)
@@ -327,56 +470,66 @@ export function GalleryAudiovisual() {
 
   const handleSubTabChange = (id: string) => {
     setActiveSubTab(id)
+    setActiveIndex(0)
     setShowAll(false)
   }
 
-  const getGridClass = () => {
-    if (currentSubcategory?.aspect === "vertical") {
-      return "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 animate-in fade-in duration-500"
-    }
-    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 animate-in fade-in duration-500"
+  const handleNext = () => {
+    if (activeIndex < allItems.length - 1) setActiveIndex(activeIndex + 1)
   }
+
+  const handlePrev = () => {
+    if (activeIndex > 0) setActiveIndex(activeIndex - 1)
+  }
+
+  const hasMore = allItems.length > VISIBLE_COUNT
 
   return (
     <section id="galeria-audiovisual" className="relative py-16 sm:py-24 bg-[#07080d] overflow-hidden">
-      {/* ── Background ── */}
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 w-[400px] sm:w-[600px] h-[400px] sm:h-[500px] bg-purple-600/[0.03] rounded-full blur-[100px] sm:blur-[140px]" />
-        <div className="absolute bottom-0 right-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[400px] bg-cyan-500/[0.03] rounded-full blur-[80px] sm:blur-[120px]" />
+        <div className="absolute top-1/3 left-0 w-[600px] h-[500px] bg-purple-600/[0.04] rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[400px] bg-cyan-500/[0.03] rounded-full blur-[120px]" />
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.025]"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundSize: "50px 50px",
+          }}
+        />
+        {/* Scan line effect */}
+        <div
+          className="absolute inset-0 opacity-[0.015] pointer-events-none"
+          style={{
+            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(168,85,247,0.08) 3px, rgba(168,85,247,0.08) 4px)",
           }}
         />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         {/* ── Header ── */}
-        <div className="text-center mb-10 sm:mb-14 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-purple-500/20 bg-purple-500/[0.05] mb-4 sm:mb-6">
+        <div className="text-center mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/[0.06] mb-5 sm:mb-6">
             <Film className="h-3 w-3 text-purple-400" />
             <span className="text-[10px] sm:text-xs font-mono text-purple-400 tracking-widest uppercase">
               Audiovisual
             </span>
           </div>
-
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 font-mono tracking-tight">
             Producción{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
               Audiovisual
             </span>
           </h2>
-
-          <p className="text-white/35 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed px-4">
+          <p className="text-white/35 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed">
             Galería de videos con producción tradicional y potenciada con IA
           </p>
         </div>
 
-        {/* ── Main Tabs (Sin IA / Con IA) ── */}
-        <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+        {/* ── Main Tabs ── */}
+        <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-5">
           {categories.map((cat) => (
             <TabButton
               key={cat.id}
@@ -384,21 +537,13 @@ export function GalleryAudiovisual() {
               onClick={() => handleMainTabChange(cat.id)}
               icon={cat.icon}
               label={cat.name}
-              tooltip={cat.id === "sin-ia" ? "Videos grabados con equipo profesional" : "Videos creados con inteligencia artificial"}
             />
           ))}
         </div>
 
-        {/* ── Category description ── */}
+        {/* ── Sub Tabs ── */}
         {currentCategory && (
-          <p className="text-center text-white/25 text-[11px] sm:text-xs font-mono mb-5 sm:mb-6 animate-in fade-in duration-300">
-            {currentCategory.description}
-          </p>
-        )}
-
-        {/* ── Sub Tabs (Vertical / Horizontal) ── */}
-        {currentCategory && (
-          <div className="flex justify-center gap-2 mb-4 sm:mb-5 animate-in fade-in duration-300">
+          <div className="flex justify-center gap-2 mb-8 sm:mb-10">
             {currentCategory.subcategories.map((sub) => (
               <TabButton
                 key={sub.id}
@@ -406,59 +551,86 @@ export function GalleryAudiovisual() {
                 onClick={() => handleSubTabChange(sub.id)}
                 icon={sub.icon}
                 label={sub.name}
-                tooltip={sub.aspect === "vertical" ? "Reels en formato 9:16" : "Videos en formato 16:9"}
               />
             ))}
           </div>
         )}
 
-        {/* ── Guide text ── */}
-        <div className="flex items-center justify-center gap-1.5 mb-6 sm:mb-8 animate-in fade-in duration-500">
-          <Info className="h-3 w-3 text-white/20" />
-          <p className="text-[10px] sm:text-xs font-mono text-white/20 text-center">
-            Selecciona una categoría y haz click en cualquier video para reproducirlo
-          </p>
+        {/* ── MAIN LAYOUT ── */}
+        {/* Mobile: stacked. Desktop: side-by-side feature + thumbnails */}
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+
+          {/* ── Feature Player (LEFT / TOP) ── */}
+          <div className={`w-full ${aspect === "vertical" ? "lg:w-[340px] xl:w-[380px] shrink-0" : "lg:flex-1"}`}>
+            {/* Player container — fixed height on desktop */}
+            <div className={`w-full ${aspect === "vertical" ? "h-[520px] sm:h-[600px] lg:h-[640px]" : "h-[250px] sm:h-[340px] lg:h-[420px]"}`}>
+              {activeItem && (
+                <FeaturePlayer
+                  item={activeItem}
+                  aspect={aspect}
+                  onNext={handleNext}
+                  onPrev={handlePrev}
+                  hasNext={activeIndex < allItems.length - 1}
+                  hasPrev={activeIndex > 0}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* ── Thumbnails panel (RIGHT / BOTTOM) ── */}
+          <div className="w-full lg:flex-1">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-4 rounded-full bg-gradient-to-b from-purple-500 to-cyan-400" />
+                <span className="text-[10px] sm:text-xs font-mono text-white/40 tracking-widest uppercase">
+                  {allItems.length} Videos
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-purple-400/60 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
+                {String(activeIndex + 1).padStart(2, "0")} / {String(allItems.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            {/* Grid — vertical: more cols, horizontal: fewer */}
+            <div
+              className={`grid gap-2 sm:gap-3 ${
+                aspect === "vertical"
+                  ? "grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5"
+                  : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-3"
+              }`}
+            >
+              {visibleItems.map((item, i) => (
+                <ThumbnailCard
+                  key={item.id}
+                  item={item}
+                  aspect={aspect}
+                  isActive={i === activeIndex}
+                  index={i}
+                  onClick={() => setActiveIndex(i)}
+                />
+              ))}
+            </div>
+
+            {/* Ver más / Ver menos */}
+            {hasMore && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-mono text-[10px] tracking-wider uppercase border border-white/[0.08] bg-white/[0.02] text-white/30 hover:text-white/60 hover:border-purple-500/30 hover:bg-purple-500/[0.04] transition-all duration-300"
+                >
+                  {showAll ? "Ver menos" : `Ver más (${allItems.length - VISIBLE_COUNT} videos)`}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* ── Grid ── */}
-        {currentSubcategory && (
-          <div key={activeSubTab} className={getGridClass()}>
-            {visibleItems.map((item, index) => (
-              <MediaCard
-                key={item.id}
-                item={item}
-                index={index}
-                aspect={currentSubcategory.aspect}
-                onClick={() => (item.url || item.thumbnail) && setSelectedItem(item)}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* ── Ver más / Ver menos ── */}
-        {hasMore && (
-          <div className="mt-6 sm:mt-8 text-center animate-in fade-in duration-500">
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="group relative inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 border border-white/[0.08] bg-white/[0.02] text-white/40 hover:text-white/70 hover:border-purple-500/30 hover:bg-purple-500/[0.05]"
-            >
-              {showAll ? (
-                <>
-                  <ChevronUp className="h-3.5 w-3.5 group-hover:text-purple-400 transition-colors" />
-                  <span>Ver menos</span>
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="h-3.5 w-3.5 group-hover:text-purple-400 transition-colors" />
-                  <span>Ver más ({allItems.length - VISIBLE_COUNT} videos)</span>
-                </>
-              )}
-            </button>
-          </div>
-        )}
+        {/* ── Separator line ── */}
+        <div className="mt-12 sm:mt-16 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
 
         {/* ── CTA ── */}
-        <div className="mt-10 sm:mt-14 text-center">
+        <div className="mt-10 sm:mt-12 text-center">
           <a
             href={whatsappUrl}
             target="_blank"
@@ -468,60 +640,12 @@ export function GalleryAudiovisual() {
             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/15 to-cyan-500/15 border border-purple-500/30 transition-all duration-300 group-hover:from-purple-500/25 group-hover:to-cyan-500/25 group-hover:border-purple-400/50" />
             <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-purple-400/50 rounded-tl-xl" />
             <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-400/50 rounded-br-xl" />
-
             <MessageCircle className="relative z-10 h-4 w-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
             <span className="relative z-10 text-white/70 group-hover:text-white/90 transition-colors">
               Solicitar Producción
             </span>
           </a>
         </div>
-
-        {/* ── Video Modal ── */}
-        {selectedItem && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm transition-opacity"
-            onClick={() => setSelectedItem(null)}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl rounded-xl sm:rounded-2xl border border-white/[0.08] bg-[#0c0d14]/95 backdrop-blur-xl overflow-hidden animate-in zoom-in-95 duration-200"
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
-
-              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/[0.06]">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg border border-purple-500/20 bg-purple-500/[0.08] flex items-center justify-center">
-                    <Video className="h-4 w-4 text-purple-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-white font-mono">
-                      {selectedItem.title}
-                    </h3>
-                    <p className="text-[10px] sm:text-xs text-white/30">{selectedItem.description}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedItem(null)}
-                  className="p-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white hover:border-white/20 transition-all"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="p-4 sm:p-5">
-                <video
-                  src={selectedItem.url}
-                  controls
-                  autoPlay
-                  className="w-full rounded-lg border border-white/[0.06] shadow-2xl"
-                />
-              </div>
-
-              <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-purple-500/15 rounded-tr-2xl" />
-              <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-purple-500/15 rounded-bl-2xl" />
-            </div>
-          </div>
-        )}
       </div>
     </section>
   )

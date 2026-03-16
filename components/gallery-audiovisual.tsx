@@ -222,8 +222,9 @@ function ThumbCard({ item, aspect, isActive, index, onClick }: {
 
 // ─── Feature Player ────────────────────────────────────────────────────
 
-function FeaturePlayer({ item, aspect, totalCount, activeIdx, onPrev, onNext }: {
-  item: MediaItem; aspect: "vertical" | "horizontal"; totalCount: number; activeIdx: number; onPrev: () => void; onNext: () => void
+function FeaturePlayer({ item, aspect, totalCount, activeIdx, onPrev, onNext, playerRef, autoPlay }: {
+  item: MediaItem; aspect: "vertical" | "horizontal"; totalCount: number; activeIdx: number
+  onPrev: () => void; onNext: () => void; playerRef?: React.RefObject<HTMLDivElement>; autoPlay?: boolean
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
@@ -237,6 +238,17 @@ function FeaturePlayer({ item, aspect, totalCount, activeIdx, onPrev, onNext }: 
     if (videoRef.current) { videoRef.current.pause(); videoRef.current.load() }
   }, [item.url])
 
+  // Auto-play when triggered from thumbnail click
+  useEffect(() => {
+    if (!autoPlay || !item.url || !videoRef.current) return
+    const vid = videoRef.current
+    // Small delay to let the video element re-mount with new src
+    const t = setTimeout(() => {
+      vid.play().then(() => setPlaying(true)).catch(() => {})
+    }, 80)
+    return () => clearTimeout(t)
+  }, [autoPlay, item.url])
+
   const togglePlay = () => {
     if (!videoRef.current || !item.url) return
     if (playing) { videoRef.current.pause(); setPlaying(false) }
@@ -244,7 +256,7 @@ function FeaturePlayer({ item, aspect, totalCount, activeIdx, onPrev, onNext }: 
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div ref={playerRef} className="flex flex-col h-full">
       {/* Player box */}
       <div className={`relative flex-1 rounded-2xl overflow-hidden bg-[#020204] flex items-center justify-center
         ${isVertical ? "min-h-[460px] sm:min-h-[540px] lg:min-h-[580px]" : "min-h-[200px] sm:min-h-[300px] lg:min-h-[360px]"}`}>
@@ -367,7 +379,18 @@ export function GalleryAudiovisual() {
   const [activeSub, setActiveSub] = useState("v-sin")
   const [activeIdx, setActiveIdx] = useState(0)
   const [showAll, setShowAll] = useState(false)
+  const [autoPlay, setAutoPlay] = useState(false)
+  const playerRef = useRef<HTMLDivElement>(null)
   const VISIBLE = 8
+
+  const selectVideo = (i: number) => {
+    setActiveIdx(i)
+    setAutoPlay(true)
+    // Scroll to player with a small offset so it centers nicely
+    setTimeout(() => {
+      playerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+    }, 50)
+  }
 
   const cat = categories.find(c => c.id === activeMain)!
   const sub = cat.subcategories.find(s => s.id === activeSub)!
@@ -379,7 +402,7 @@ export function GalleryAudiovisual() {
     setActiveMain(id)
     const c = categories.find(c => c.id === id)!
     setActiveSub(c.subcategories[0].id)
-    setActiveIdx(0); setShowAll(false)
+    setActiveIdx(0); setShowAll(false); setAutoPlay(false)
   }
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
@@ -447,7 +470,7 @@ export function GalleryAudiovisual() {
                 const active = activeSub === s.id
                 return (
                   <button key={s.id}
-                    onClick={() => { setActiveSub(s.id); setActiveIdx(0); setShowAll(false) }}
+                    onClick={() => { setActiveSub(s.id); setActiveIdx(0); setShowAll(false); setAutoPlay(false) }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[10px] tracking-wider uppercase transition-all duration-300 ${
                       active
                         ? "text-violet-400 border border-violet-500/30 bg-violet-500/[0.08]"
@@ -470,8 +493,10 @@ export function GalleryAudiovisual() {
                 aspect={sub.aspect}
                 totalCount={items.length}
                 activeIdx={activeIdx}
-                onPrev={() => setActiveIdx(i => Math.max(0, i - 1))}
-                onNext={() => setActiveIdx(i => Math.min(items.length - 1, i + 1))}
+                playerRef={playerRef}
+                autoPlay={autoPlay}
+                onPrev={() => { setAutoPlay(false); setActiveIdx(i => Math.max(0, i - 1)) }}
+                onNext={() => { setAutoPlay(false); setActiveIdx(i => Math.min(items.length - 1, i + 1)) }}
               />
             </div>
 
@@ -495,7 +520,7 @@ export function GalleryAudiovisual() {
               }`}>
                 {visibleItems.map((item, i) => (
                   <ThumbCard key={item.id} item={item} aspect={sub.aspect}
-                    isActive={i === activeIdx} index={i} onClick={() => setActiveIdx(i)} />
+                    isActive={i === activeIdx} index={i} onClick={() => selectVideo(i)} />
                 ))}
               </div>
 

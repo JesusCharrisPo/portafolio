@@ -201,19 +201,19 @@ export default function ContactForm() {
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* ── Header ── */}
-          <div style={r(0)} className="text-center mb-12 sm:mb-16">
+          <div style={r(0)} className="text-center mb-12 sm:mb-16 px-2">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/[0.06] mb-5">
               <Zap className="h-3 w-3 text-violet-400" />
               <span className="text-[9px] font-mono text-violet-400 tracking-[.18em] uppercase">Contacto</span>
             </div>
-            <h2 className="font-black text-white leading-tight mb-4"
-              style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(2rem,6vw,4.5rem)" }}>
-              Inicia la
-              <span className="ml-3" style={{ background:"linear-gradient(135deg,#a78bfa,#e879f9,#22d3ee)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
+            <h2 className="font-black text-white leading-tight mb-4 text-center break-words"
+              style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(1.8rem,5vw,4.5rem)" }}>
+              Inicia la{" "}
+              <span style={{ background:"linear-gradient(135deg,#a78bfa,#e879f9,#22d3ee)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
                 Conversación
               </span>
             </h2>
-            <p className="text-white/28 text-sm max-w-md mx-auto leading-relaxed"
+            <p className="text-white/28 text-sm max-w-md mx-auto leading-relaxed px-4"
               style={{ fontFamily:"'DM Mono',monospace", fontWeight:300 }}>
               Cuéntame tu proyecto. Respondo en menos de 24 horas.
             </p>

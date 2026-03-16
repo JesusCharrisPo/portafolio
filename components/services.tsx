@@ -359,19 +359,19 @@ export function Services() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* ── Header ── */}
-          <div style={r(0)} className="text-center mb-12 sm:mb-16">
+          <div style={r(0)} className="text-center mb-12 sm:mb-16 px-2">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/[0.06] mb-5">
               <Zap className="h-3 w-3 text-violet-400" />
               <span className="text-[9px] font-mono text-violet-400 tracking-[.18em] uppercase">Servicios</span>
             </div>
-            <h2 className="font-black text-white leading-tight mb-4 text-center"
-              style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(2rem,6vw,5rem)" }}>
-              Soluciones
-              <span className="ml-3" style={{ background:"linear-gradient(135deg,#a78bfa,#22d3ee)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
+            <h2 className="font-black text-white leading-tight mb-4 text-center break-words"
+              style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(1.9rem,5vw,5rem)" }}>
+              Soluciones{" "}
+              <span style={{ background:"linear-gradient(135deg,#a78bfa,#22d3ee)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
                 Integrales
               </span>
             </h2>
-            <p className="text-white/28 text-sm max-w-xl mx-auto leading-relaxed"
+            <p className="text-white/28 text-sm max-w-xl mx-auto leading-relaxed px-4"
               style={{ fontFamily:"'DM Mono',monospace", fontWeight:300 }}>
               Marketing digital, desarrollo web y producción audiovisual con IA
               para acelerar el crecimiento de tu negocio.
@@ -379,7 +379,7 @@ export function Services() {
           </div>
 
           {/* ── Grid ── */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {SERVICES.map((svc, i) => (
               <HoloCard key={svc.id} svc={svc} index={i} onOpen={() => setOpen(svc)} />
             ))}

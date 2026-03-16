@@ -16,10 +16,10 @@ export default function Page() {
   return (
     <main>
       <Header />
-      <ShowreelHero />
       <Hero />
       <ComoPoedoAyudarte />
       <GalleryDesarrolloWeb />
+	  <ShowreelHero />
       <GalleryAudiovisual />
       <AIVideoShowcase />
       <GalleryCatalogoRopa />

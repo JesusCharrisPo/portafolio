@@ -10,29 +10,24 @@ import { Blog } from "@/components/blog"
 import ContactForm from "@/components/ContactForm"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
+import { ShowreelHero }   from "@/components/ShowreelHero"
+import { StatsSection }   from "@/components/StatsSection"
+import { ProcesoCreativo } from "@/components/ProcesoCreativo"
 
 export default function Page() {
   return (
     <main>
       <Header />
+      <ShowreelHero />   {/* ← justo después del Header, reemplaza o complementa el Hero actual */}
       <Hero />
       <About />
+      <StatsSection />   {/* ← después del About, genera confianza */}
       <Services />
-      <GalleryDesarrolloWeb />
       <GalleryAudiovisual />
-
-      {/* Nueva sección IA */}
-      <AIVideoShowcase />
-
-      <GalleryCatalogoRopa />
-
-      {/* PORTFOLIO OCULTO */}
-
+      <BeforeAfterIA />
+      <ProcesoCreativo /> {/* ← antes del contacto, cierra el funnel */}
       <Blog />
-
-      {/* FORMULARIO */}
       <ContactForm />
-
       <Contact />
       <Footer />
     </main>

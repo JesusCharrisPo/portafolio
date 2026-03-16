@@ -1,6 +1,5 @@
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
-import { About } from "@/components/about"
 import { ComoPoedoAyudarte } from "@/components/ComoPoedoAyudarte"
 import { GalleryDesarrolloWeb } from "@/components/gallery-desarrollo-web"
 import { GalleryAudiovisual } from "@/components/gallery-audiovisual"

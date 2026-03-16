@@ -1,6 +1,5 @@
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
-import { ComoPoedoAyudarte } from "@/components/ComoPoedoAyudarte"
 import { Services } from "@/components/services"
 import { GalleryDesarrolloWeb } from "@/components/gallery-desarrollo-web"
 import { GalleryAudiovisual } from "@/components/gallery-audiovisual"
@@ -18,7 +17,6 @@ export default function Page() {
     <main>
       <Header />
       <Hero />
-      <ComoPoedoAyudarte />
       <Services />
       <GalleryDesarrolloWeb />
       <ShowreelHero />

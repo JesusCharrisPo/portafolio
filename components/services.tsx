@@ -364,8 +364,8 @@ export function Services() {
               <Zap className="h-3 w-3 text-violet-400" />
               <span className="text-[9px] font-mono text-violet-400 tracking-[.18em] uppercase">Servicios</span>
             </div>
-            <h2 className="font-black text-white leading-tight mb-4"
-              style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(2.5rem,7vw,5rem)" }}>
+            <h2 className="font-black text-white leading-tight mb-4 text-center"
+              style={{ fontFamily:"'Syne',sans-serif", fontSize:"clamp(2rem,6vw,5rem)" }}>
               Soluciones
               <span className="ml-3" style={{ background:"linear-gradient(135deg,#a78bfa,#22d3ee)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>
                 Integrales

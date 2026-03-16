@@ -89,19 +89,12 @@ export function Header() {
             {/* ── Logo ── */}
             <Link href="/" className="relative group shrink-0"
               style={{ animation: "nav-in .6s ease both" }}>
-              <span className="text-lg font-black tracking-tight text-white/90 transition-colors duration-300 group-hover:text-white"
-                style={{ fontFamily:"'Syne',sans-serif" }}>
-                Jesus
-              </span>
               <span className="text-lg font-black tracking-tight"
-                style={{
-                  fontFamily:"'Syne',sans-serif",
-                  background: `linear-gradient(${90 + mouseX*40}deg, #a78bfa, #e879f9, #22d3ee)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  transition: "all .2s ease",
-                }}>
-                Charris
+                style={{ fontFamily:"'Syne',sans-serif" }}>
+                <span className="text-white/90 group-hover:text-white transition-colors duration-300">Jesus</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400">
+                  Charris
+                </span>
               </span>
               {/* Underline */}
               <span className="absolute -bottom-0.5 left-0 w-0 h-px group-hover:w-full transition-all duration-400"

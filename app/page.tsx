@@ -1,6 +1,7 @@
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
 import { ComoPoedoAyudarte } from "@/components/ComoPoedoAyudarte"
+import { Services } from "@/components/services"
 import { GalleryDesarrolloWeb } from "@/components/gallery-desarrollo-web"
 import { GalleryAudiovisual } from "@/components/gallery-audiovisual"
 import { AIVideoShowcase } from "@/components/ai-video-showcase"
@@ -18,8 +19,9 @@ export default function Page() {
       <Header />
       <Hero />
       <ComoPoedoAyudarte />
+      <Services />
       <GalleryDesarrolloWeb />
-	  <ShowreelHero />
+      <ShowreelHero />
       <GalleryAudiovisual />
       <AIVideoShowcase />
       <GalleryCatalogoRopa />

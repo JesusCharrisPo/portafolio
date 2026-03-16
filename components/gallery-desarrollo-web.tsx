@@ -250,13 +250,13 @@ export function GalleryDesarrolloWeb() {
 
             {/* ── FEATURED (LEFT — big) ── */}
             <div className="relative lg:flex-[3] rounded-2xl overflow-hidden cursor-pointer group"
-              style={{ minHeight: "420px", animation: vis ? "featured-in .6s ease" : "none" }}
+              style={{ minHeight: "520px", animation: vis ? "featured-in .6s ease" : "none" }}
               onClick={() => featured.images.length > 0 && setModal(featured)}>
 
               {/* Image */}
               {featured.images[0] ? (
                 <img key={featured.id} src={featured.images[0]} alt={featured.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   style={{ animation: "featured-in .5s ease" }} />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center" style={{ background: cat.glow+"0.06)" }}>
@@ -340,7 +340,7 @@ export function GalleryDesarrolloWeb() {
                       style={{ background: cat.glow+"0.08)" }}>
                       {proj.images[0] ? (
                         <img src={proj.images[0]} alt={proj.short}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <ImageIcon className="h-5 w-5" style={{ color: cat.accent+"40" }} />

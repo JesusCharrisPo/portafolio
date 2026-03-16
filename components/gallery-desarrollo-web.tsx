@@ -223,22 +223,47 @@ export function GalleryDesarrolloWeb() {
           </div>
 
           {/* ── Category tabs ── */}
-          <div style={r(100)} className="flex justify-center mb-10 sm:mb-14">
-            <div className="flex gap-1.5 p-1.5 rounded-2xl border border-white/[0.05] bg-white/[0.02]">
-              {CATS.map(c => {
+          <div style={r(100)} className="mb-10 sm:mb-14">
+            {/* Tabs — scrollable en móvil, centrado en desktop */}
+            <div className="flex justify-center overflow-x-auto pb-1 scrollbar-hide">
+              <div className="flex gap-1.5 p-1.5 rounded-2xl border border-white/[0.05] bg-white/[0.02] shrink-0 mx-auto">
+                {CATS.map(c => {
+                  const Icon = c.icon
+                  const active = activeCat === c.id
+                  return (
+                    <button key={c.id} onClick={() => setActiveCat(c.id)}
+                      className="relative flex items-center gap-2 px-4 sm:px-7 py-2.5 rounded-xl font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 whitespace-nowrap"
+                      style={{
+                        color: active ? c.accent : "rgba(255,255,255,.28)",
+                        background: active ? c.glow+"0.1)" : "transparent",
+                        border: active ? `1px solid ${c.accent}35` : "1px solid transparent",
+                        boxShadow: active ? `0 0 24px ${c.glow}0.18)` : "none",
+                      }}>
+                      <Icon className="h-3.5 w-3.5 shrink-0" />
+                      {c.name}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Category hints — incentiva a explorar las otras categorías */}
+            <div className="flex justify-center gap-4 sm:gap-8 mt-5 flex-wrap">
+              {CATS.filter(c => c.id !== activeCat).map(c => {
                 const Icon = c.icon
-                const active = activeCat === c.id
                 return (
                   <button key={c.id} onClick={() => setActiveCat(c.id)}
-                    className="relative flex items-center gap-2 px-5 sm:px-7 py-2.5 rounded-xl font-mono text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300"
-                    style={{
-                      color: active ? c.accent : "rgba(255,255,255,.28)",
-                      background: active ? c.glow+"0.1)" : "transparent",
-                      border: active ? `1px solid ${c.accent}35` : "1px solid transparent",
-                      boxShadow: active ? `0 0 24px ${c.glow}0.18)` : "none",
-                    }}>
-                    <Icon className="h-3.5 w-3.5" />
-                    {c.name}
+                    className="group flex items-center gap-2 transition-all duration-300 hover:scale-105">
+                    <div className="w-6 h-6 rounded-lg border flex items-center justify-center transition-all duration-300 group-hover:brightness-125"
+                      style={{ borderColor: c.accent+"25", background: c.glow+"0.07)" }}>
+                      <Icon className="h-3 w-3" style={{ color: c.accent+"80" }} />
+                    </div>
+                    <span className="text-[10px] font-mono tracking-wider uppercase transition-colors"
+                      style={{ color: "rgba(255,255,255,.2)" }}>
+                      Ver {c.name}
+                    </span>
+                    <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0"
+                      style={{ color: c.accent }} />
                   </button>
                 )
               })}
@@ -250,7 +275,7 @@ export function GalleryDesarrolloWeb() {
 
             {/* ── FEATURED (LEFT — big) ── */}
             <div className="relative lg:flex-[3] rounded-2xl overflow-hidden cursor-pointer group"
-              style={{ aspectRatio: "4/3", minHeight: "320px", maxHeight: "620px", animation: vis ? "featured-in .6s ease" : "none" }}
+              style={{ height: "clamp(320px, 55vw, 580px)", animation: vis ? "featured-in .6s ease" : "none" }}
               onClick={() => featured.images.length > 0 && setModal(featured)}>
 
               {/* Image */}

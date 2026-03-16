@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ArrowRight, Sparkles, Code2, Film, Zap } from "lucide-react"
+import { ArrowRight, Sparkles, Code2, Film, Zap, Megaphone, Target, Globe, BarChart2, TrendingUp, Lightbulb, Download } from "lucide-react"
 
 const WHATSAPP_URL = "https://wa.me/573043819731?text=%F0%9F%9A%80%20%C2%A1Hola%20Jesus!%20%F0%9F%91%8B%20Vi%20tu%20portafolio%20y%20me%20interesa%20una%20*consulta%20gratuita*%20para%20mi%20proyecto%20%F0%9F%92%A1%20%C2%BFPodemos%20agendar%20una%20llamada%3F%20%F0%9F%93%9E%E2%9C%A8"
 
@@ -295,6 +295,7 @@ export function Hero() {
                   { icon: Film,   val: "80+",  label: "Proyectos" },
                   { icon: Code2,  val: "30+",  label: "Clientes" },
                   { icon: Zap,    val: "3+",   label: "Años exp." },
+                  { icon: TrendingUp, val: "98%", label: "Satisfacción" },
                 ].map((s, i) => {
                   const Icon = s.icon
                   return (
@@ -306,10 +307,58 @@ export function Hero() {
                         <p className="text-xs font-black text-white leading-none" style={{ fontFamily: "'Syne', sans-serif" }}>{s.val}</p>
                         <p className="text-[9px] font-mono text-white/25 leading-none mt-0.5">{s.label}</p>
                       </div>
-                      {i < 2 && <div className="w-px h-6 bg-white/[0.07] ml-3" />}
+                      {i < 3 && <div className="w-px h-6 bg-white/[0.07] ml-3" />}
                     </div>
                   )
                 })}
+              </div>
+
+              {/* Skills grid */}
+              <div className="hero-reveal-5 mt-8">
+                <p className="text-[9px] font-mono text-white/20 tracking-widest uppercase mb-3 text-center lg:text-left">
+                  Especialidades
+                </p>
+                <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto lg:mx-0">
+                  {[
+                    { icon: Megaphone,  label: "Marketing Digital" },
+                    { icon: Target,     label: "Tráfico y Conversión" },
+                    { icon: Code2,      label: "Desarrollo Web" },
+                    { icon: Film,       label: "Producción Audiovisual" },
+                    { icon: Sparkles,   label: "Inteligencia Artificial" },
+                    { icon: BarChart2,  label: "Analytics y Métricas" },
+                    { icon: TrendingUp, label: "Growth Hacking" },
+                    { icon: Lightbulb,  label: "Estrategia de Negocio" },
+                  ].map((skill, i) => {
+                    const Icon = skill.icon
+                    return (
+                      <div
+                        key={i}
+                        title={skill.label}
+                        className="group flex flex-col items-center gap-1.5 p-2.5 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:border-violet-500/30 hover:bg-violet-500/[0.07] transition-all duration-300 cursor-default"
+                      >
+                        <Icon className="h-4 w-4 text-cyan-400/70 group-hover:text-cyan-400 transition-colors" />
+                        <span className="text-[7px] font-mono text-white/25 group-hover:text-white/50 text-center leading-tight transition-colors line-clamp-2">
+                          {skill.label}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* CV download button */}
+              <div className="hero-reveal-5 mt-5 flex justify-center lg:justify-start">
+                <a
+                  href="/JESUS-CHARRIS.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:border-violet-500/30 hover:bg-violet-500/[0.06] transition-all duration-300"
+                >
+                  <Download className="h-3.5 w-3.5 text-white/40 group-hover:text-violet-400 transition-colors" />
+                  <span className="font-mono text-[10px] text-white/40 group-hover:text-white/70 tracking-widest uppercase transition-colors">
+                    Descargar CV
+                  </span>
+                </a>
               </div>
             </div>
 
